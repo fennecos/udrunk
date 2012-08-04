@@ -1,1 +1,5 @@
 udrunk/.apt_generated
+udrunk/bin
+udrunk/gen
+library/bin
+library/gen
