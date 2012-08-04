@@ -1,9 +1,12 @@
 package net.udrunk;
 
-import android.app.Activity;
 import android.os.Bundle;
 
-public class UdrunkActivity extends Activity {
+import com.actionbarsherlock.app.SherlockActivity;
+import com.googlecode.androidannotations.annotations.EActivity;
+
+@EActivity
+public class UdrunkActivity extends SherlockActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
