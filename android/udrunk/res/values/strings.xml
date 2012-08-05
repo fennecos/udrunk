@@ -4,4 +4,10 @@
     <string name="hello">Hello World, UdrunkActivity!</string>
     <string name="app_name">Udrunk</string>
 
+    <string-array
+        name="viewpager_titles">
+        <item>Feeds</item>
+        <item>Around Me</item>
+    </string-array>
+
 </resources>

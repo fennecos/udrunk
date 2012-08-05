@@ -1,6 +1,8 @@
 udrunk/.apt_generated
 udrunk/bin
 udrunk/gen
-library/bin
-library/gen
+sherlock/bin
+sherlock/gen
 udrunk/.settings
+viewPagerIndicator/bin
+viewPagerIndicator/gen

@@ -12,6 +12,8 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,12 +26,16 @@ import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.rest.RestService;
+import com.viewpagerindicator.TitlePageIndicator;
 
 @EActivity(R.layout.main)
 public class UdrunkActivity extends SherlockFragmentActivity {
 
 	@ViewById
 	public ViewPager viewPager;
+
+	@ViewById
+	public TitlePageIndicator titleIndicator;
 
 	private MyFragmentPagerAdapter mMyFragmentPagerAdapter;
 
@@ -52,10 +58,15 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());
 		viewPager.setAdapter(mMyFragmentPagerAdapter);
+		
+		//Bind the title indicator to the adapter
+		titleIndicator.setViewPager(viewPager);
+		titleIndicator.setTextColor(Color.BLACK);
+		titleIndicator.setSelectedColor(Color.BLACK);
 
 	}
 
-	private static class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		public MyFragmentPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -71,6 +82,13 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		public int getCount() {
 
 			return fragmentList.size();
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			Resources res = UdrunkActivity.this.getResources();
+			String[] titles = res.getStringArray(R.array.viewpager_titles);
+			return titles[position];
 		}
 	}
 

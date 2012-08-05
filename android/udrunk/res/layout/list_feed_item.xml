@@ -9,37 +9,47 @@
         android:layout_height="48dp"
         android:scaleType="centerCrop"
         />
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/centralLayout"
         android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:orientation="vertical"
-	    android:layout_toLeftOf="@+id/rightLayout"
-	    android:layout_toRightOf="@+id/img_avatar"
+	    android:layout_toRightOf="@id/img_avatar"
 	    android:paddingLeft="8dp">
         
 	    <TextView
-	        android:id="@+id/nameText"
+	        android:id="@+id/txt_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textAppearance="?android:attr/textAppearanceLarge" />
+	        android:textColor="@android:color/black"/>
+
+   	    <TextView
+	        android:id="@+id/txt_place"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@id/txt_name"
+	        android:layout_alignBaseline="@id/txt_name"
+	        android:textSize="10dp"
+	        android:paddingLeft="8dp"/>
 	
 	    <TextView
-	        android:id="@+id/statusText"
+	        android:id="@+id/txt_status"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:textAppearance="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
+	        android:layout_below="@id/txt_name"/>
+    </RelativeLayout>
     
     <LinearLayout 
         android:id="@+id/rightLayout"
         android:layout_width="wrap_content"
 	    android:layout_height="fill_parent"
 	    android:orientation="vertical"
-	    android:layout_alignParentRight="true">
+	    android:layout_alignParentRight="true"
+	    android:paddingRight="8dp">
 	    <TextView
-	        android:id="@+id/levelText"
+	        android:id="@+id/txt_level"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
 	        android:textAppearance="?android:attr/textAppearanceLarge" 
 	        />
     </LinearLayout>

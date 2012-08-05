@@ -34,9 +34,10 @@ public class CheckinAdapter extends ArrayAdapter<Checkin> {
 		Checkin feed = items.get(position);
 		if (feed != null) {
 			ImageView avatarImg = (ImageView) v.findViewById(R.id.img_avatar);
-			TextView nameText = (TextView) v.findViewById(R.id.nameText);
-			TextView statusText = (TextView) v.findViewById(R.id.statusText);
-			TextView percentText = (TextView) v.findViewById(R.id.levelText);
+			TextView nameText = (TextView) v.findViewById(R.id.txt_name);
+			TextView statusText = (TextView) v.findViewById(R.id.txt_status);
+			TextView percentText = (TextView) v.findViewById(R.id.txt_level);
+			TextView placeText = (TextView) v.findViewById(R.id.txt_place);
 
 			nameText.setText(feed.getUser().getUsername());
 			UdrunkApplication.imageLoader.bind(avatarImg, feed.getUser()
@@ -44,8 +45,9 @@ public class CheckinAdapter extends ArrayAdapter<Checkin> {
 
 			if (feed.getStatus() != null && feed.getStatus() != "") {
 				statusText.setText(feed.getStatus());
-			} else if (feed.getPlace() != null) {
-				statusText.setText("est ˆ " + feed.getPlace().getName());
+			} 
+			if (feed.getPlace() != null && feed.getPlace().getCity() != null) {
+				placeText.setText("@ " + feed.getPlace().getCity());
 			}
 			if (feed.getLevel() != null) {
 				percentText.setText(feed.getLevel() + "%");
