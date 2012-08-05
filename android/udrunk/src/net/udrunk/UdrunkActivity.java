@@ -1,16 +1,103 @@
 package net.udrunk;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import net.udrunk.services.UdrunkClient;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RestTemplate;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.googlecode.androidannotations.annotations.AfterInject;
+import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.ViewById;
+import com.googlecode.androidannotations.annotations.rest.RestService;
 
-@EActivity
-public class UdrunkActivity extends SherlockActivity {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-    }
+@EActivity(R.layout.main)
+public class UdrunkActivity extends SherlockFragmentActivity {
+
+	@ViewById
+	public ViewPager viewPager;
+
+	private MyFragmentPagerAdapter mMyFragmentPagerAdapter;
+
+	@RestService
+	public UdrunkClient restClient;
+
+	private static ArrayList<Fragment> fragmentList;
+
+	public void onCreate(Bundle savedInstanceState) {
+
+		super.onCreate(savedInstanceState);
+	}
+
+	@AfterViews
+	public void afterViews() {
+		fragmentList = new ArrayList<Fragment>();
+		fragmentList.add(new TimelineFragment_());
+		fragmentList.add(new TimelineFragment_());
+
+		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
+				getSupportFragmentManager());
+		viewPager.setAdapter(mMyFragmentPagerAdapter);
+
+	}
+
+	private static class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+
+		public MyFragmentPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int index) {
+
+			return fragmentList.get(index);
+		}
+
+		@Override
+		public int getCount() {
+
+			return fragmentList.size();
+		}
+	}
+
+	@AfterInject
+	public void initAuth() {
+
+		// This should of course be extracted into a separate class
+		ClientHttpRequestInterceptor authInterceptor = new ClientHttpRequestInterceptor() {
+
+			@Override
+			public ClientHttpResponse intercept(HttpRequest request,
+					byte[] body, ClientHttpRequestExecution execution)
+					throws IOException {
+				HttpHeaders headers = request.getHeaders();
+
+				String username = "valentin";
+				String key = "valentin";
+				headers.set("Authorization", "ApiKey " + username + ":" + key);
+
+				return execution.execute(request, body);
+			}
+		};
+
+		RestTemplate rt = restClient.getRestTemplate();
+
+		ClientHttpRequestInterceptor[] interceptors = { authInterceptor };
+		rt.setInterceptors(interceptors);
+
+	}
 }

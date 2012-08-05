@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="48dp">
+
+    <ImageView 
+        android:id="@+id/img_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        />
+    <LinearLayout
+        android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical"
+	    android:layout_toLeftOf="@+id/rightLayout"
+	    android:layout_toRightOf="@+id/img_avatar"
+	    android:paddingLeft="8dp">
+        
+	    <TextView
+	        android:id="@+id/nameText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	    <TextView
+	        android:id="@+id/statusText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/rightLayout"
+        android:layout_width="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical"
+	    android:layout_alignParentRight="true">
+	    <TextView
+	        android:id="@+id/levelText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        />
+    </LinearLayout>
+
+</RelativeLayout>
