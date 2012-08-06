@@ -12,6 +12,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.rest.RestService;
@@ -63,6 +65,12 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
+	}
+
+	@Click(R.id.btn_share)
+	void shareClicked() {
+		Intent intent = new Intent(this, ShareActivity_.class);
+		startActivity(intent);
 	}
 
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {

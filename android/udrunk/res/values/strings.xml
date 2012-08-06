@@ -3,6 +3,8 @@
 
     <string name="hello">Hello World, UdrunkActivity!</string>
     <string name="app_name">Udrunk</string>
+    <string name="share">Share</string>
+    <string name="img_description_avatar">Udrunk</string>
 
     <string-array
         name="viewpager_titles">
