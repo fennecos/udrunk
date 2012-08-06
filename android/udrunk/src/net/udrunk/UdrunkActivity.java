@@ -58,12 +58,11 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());
 		viewPager.setAdapter(mMyFragmentPagerAdapter);
-		
-		//Bind the title indicator to the adapter
+
+		// Bind the title indicator to the adapter
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
-
 	}
 
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -83,7 +82,7 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 
 			return fragmentList.size();
 		}
-		
+
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Resources res = UdrunkActivity.this.getResources();
