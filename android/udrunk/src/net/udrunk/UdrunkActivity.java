@@ -20,13 +20,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.widget.ImageButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.Touch;
 import com.googlecode.androidannotations.annotations.ViewById;
+import com.googlecode.androidannotations.annotations.res.AnimationRes;
 import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -39,10 +44,16 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 	@ViewById
 	public TitlePageIndicator titleIndicator;
 
+	@ViewById(R.id.btn_share)
+	public ImageButton shareButton;
+
 	private MyFragmentPagerAdapter mMyFragmentPagerAdapter;
 
 	@RestService
 	public UdrunkClient restClient;
+	
+	@AnimationRes(R.anim.share_button_anim)
+	public Animation shareAnim;
 
 	private static ArrayList<Fragment> fragmentList;
 
@@ -73,6 +84,11 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		startActivity(intent);
 	}
 
+	@Touch(R.id.btn_share)
+	void shareTouched(MotionEvent event) {
+		shareButton.startAnimation(shareAnim);
+	}
+	
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		public MyFragmentPagerAdapter(FragmentManager fm) {
