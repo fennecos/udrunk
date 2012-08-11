@@ -3,6 +3,7 @@ package net.udrunk;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.services.UdrunkClient;
 
 import org.springframework.http.HttpHeaders;
@@ -21,18 +22,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Window;
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
+import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.res.AnimationRes;
 import com.googlecode.androidannotations.annotations.rest.RestService;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.viewpagerindicator.TitlePageIndicator;
 
 @EActivity(R.layout.main)
@@ -51,19 +55,25 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 
 	@RestService
 	public UdrunkClient restClient;
-	
+
 	@AnimationRes(R.anim.share_button_anim)
 	public Animation shareAnim;
+
+	private DataBaseHelper databaseHelper;
 
 	private static ArrayList<Fragment> fragmentList;
 
 	public void onCreate(Bundle savedInstanceState) {
+
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminateVisibility(true);
 
 		super.onCreate(savedInstanceState);
 	}
 
 	@AfterViews
 	public void afterViews() {
+
 		fragmentList = new ArrayList<Fragment>();
 		fragmentList.add(new TimelineFragment_());
 		fragmentList.add(new TimelineFragment_());
@@ -78,17 +88,41 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		titleIndicator.setSelectedColor(Color.BLACK);
 	}
 
-	@Click(R.id.btn_share)
-	void shareClicked() {
-		Intent intent = new Intent(this, ShareActivity_.class);
-		startActivity(intent);
-	}
-
 	@Touch(R.id.btn_share)
 	void shareTouched(MotionEvent event) {
-		shareButton.startAnimation(shareAnim);
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			shareButton.startAnimation(shareAnim);
+			break;
+		case MotionEvent.ACTION_UP:
+			Intent intent = new Intent(this, ShareActivity_.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
 	}
 	
+	@UiThread
+	void showProgress() {
+		findViewById(R.id.refresh).setVisibility(View.GONE);
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@UiThread
+	void hideProgress() {
+		findViewById(R.id.refresh).setVisibility(View.VISIBLE);
+		setSupportProgressBarIndeterminateVisibility(false);
+	}
+	
+	protected DataBaseHelper getDBHelper() {
+		if (databaseHelper == null) {
+			databaseHelper = OpenHelperManager.getHelper(this,
+					DataBaseHelper.class);
+		}
+		return databaseHelper;
+	}
+
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		public MyFragmentPagerAdapter(FragmentManager fm) {

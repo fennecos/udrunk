@@ -1,6 +1,6 @@
 package net.udrunk.adapters;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.udrunk.R;
 import net.udrunk.UdrunkApplication;
@@ -15,10 +15,10 @@ import android.widget.TextView;
 
 public class CheckinAdapter extends ArrayAdapter<Checkin> {
 
-	private ArrayList<Checkin> items;
+	private List<Checkin> items;
 
 	public CheckinAdapter(Context context, int textViewResourceId,
-			ArrayList<Checkin> items) {
+			List<Checkin> items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 	}

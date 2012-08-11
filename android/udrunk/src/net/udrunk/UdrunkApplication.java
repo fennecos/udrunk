@@ -1,9 +1,9 @@
 package net.udrunk;
 
-import com.google.android.imageloader.ImageLoader;
-
 import net.udrunk.domain.User;
 import android.app.Application;
+
+import com.google.android.imageloader.ImageLoader;
 
 public class UdrunkApplication extends Application {
 

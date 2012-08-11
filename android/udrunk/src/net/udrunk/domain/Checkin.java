@@ -1,25 +1,32 @@
 package net.udrunk.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+
 
 public class Checkin {
-
-	private String id;
+	@DatabaseField(id = true)
+	private Integer id;
 	
+	@DatabaseField
 	private String added;
 	
+	@DatabaseField
 	private Integer level;
 	
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Place place;
 	
+	@DatabaseField
 	private String status;
 	
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User user;
 	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
