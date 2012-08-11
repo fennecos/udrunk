@@ -76,7 +76,7 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 
 		fragmentList = new ArrayList<Fragment>();
 		fragmentList.add(new TimelineFragment_());
-		fragmentList.add(new TimelineFragment_());
+		fragmentList.add(new PlacesFragment_());
 
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());

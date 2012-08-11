@@ -9,7 +9,7 @@
     <string-array
         name="viewpager_titles">
         <item>Feeds</item>
-        <item>Around Me</item>
+        <item>Places</item>
     </string-array>
 
 </resources>
