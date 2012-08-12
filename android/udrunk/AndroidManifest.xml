@@ -24,6 +24,9 @@
         <activity android:name=".ShareActivity_">
             
         </activity>
+        
+        <service android:name="net.udrunk.services.CheckinService_"
+            android:process=":checkin_process"></service>
     </application>
 
 </manifest>

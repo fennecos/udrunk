@@ -1,17 +1,6 @@
 package net.udrunk;
 
-import java.io.IOException;
 import java.util.ArrayList;
-
-import net.udrunk.infra.DataBaseHelper;
-import net.udrunk.services.UdrunkClient;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.RestTemplate;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -26,21 +15,17 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
-import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.res.AnimationRes;
-import com.googlecode.androidannotations.annotations.rest.RestService;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.viewpagerindicator.TitlePageIndicator;
 
 @EActivity(R.layout.main)
-public class UdrunkActivity extends SherlockFragmentActivity {
+public class UdrunkActivity extends CommonActivity {
 
 	@ViewById
 	public ViewPager viewPager;
@@ -53,15 +38,12 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 
 	private MyFragmentPagerAdapter mMyFragmentPagerAdapter;
 
-	@RestService
-	public UdrunkClient restClient;
-
 	@AnimationRes(R.anim.share_button_anim)
 	public Animation shareAnim;
 
-	private DataBaseHelper databaseHelper;
-
 	private static ArrayList<Fragment> fragmentList;
+
+	private TimelineFragment timelineFragment;
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -75,7 +57,8 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 	public void afterViews() {
 
 		fragmentList = new ArrayList<Fragment>();
-		fragmentList.add(new TimelineFragment_());
+		timelineFragment = new TimelineFragment_();
+		fragmentList.add(timelineFragment);
 		fragmentList.add(new PlacesFragment_());
 
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
@@ -86,6 +69,7 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
+
 	}
 
 	@Touch(R.id.btn_share)
@@ -102,7 +86,7 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 			break;
 		}
 	}
-	
+
 	@UiThread
 	void showProgress() {
 		findViewById(R.id.refresh).setVisibility(View.GONE);
@@ -113,14 +97,6 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 	void hideProgress() {
 		findViewById(R.id.refresh).setVisibility(View.VISIBLE);
 		setSupportProgressBarIndeterminateVisibility(false);
-	}
-	
-	protected DataBaseHelper getDBHelper() {
-		if (databaseHelper == null) {
-			databaseHelper = OpenHelperManager.getHelper(this,
-					DataBaseHelper.class);
-		}
-		return databaseHelper;
 	}
 
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -149,30 +125,11 @@ public class UdrunkActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	@AfterInject
-	public void initAuth() {
+	@Override
+	public void onCheckinsRetieved() {
 
-		// This should of course be extracted into a separate class
-		ClientHttpRequestInterceptor authInterceptor = new ClientHttpRequestInterceptor() {
-
-			@Override
-			public ClientHttpResponse intercept(HttpRequest request,
-					byte[] body, ClientHttpRequestExecution execution)
-					throws IOException {
-				HttpHeaders headers = request.getHeaders();
-
-				String username = "valentin";
-				String key = "valentin";
-				headers.set("Authorization", "ApiKey " + username + ":" + key);
-
-				return execution.execute(request, body);
-			}
-		};
-
-		RestTemplate rt = restClient.getRestTemplate();
-
-		ClientHttpRequestInterceptor[] interceptors = { authInterceptor };
-		rt.setInterceptors(interceptors);
-
+		timelineFragment.updateCheckins();
+		hideProgress();
 	}
+
 }

@@ -5,9 +5,6 @@ import java.util.List;
 
 import net.udrunk.adapters.CheckinAdapter;
 import net.udrunk.domain.Checkin;
-import net.udrunk.domain.Place;
-import net.udrunk.domain.User;
-import net.udrunk.domain.dto.AllCheckinsDto;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -15,7 +12,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -31,25 +27,6 @@ public class TimelineFragment extends SherlockFragment {
 	public void afterViews() {
 		setHasOptionsMenu(true);
 		updateCheckins();
-		getCheckins();
-	}
-
-	@Background
-	public void getCheckins() {
-		getUdrunkActivity().showProgress();
-
-		AllCheckinsDto checkins = getUdrunkActivity().restClient.getFeed();
-
-		for (Checkin checkin : checkins.objects) {
-			try {
-				getPlaceDao().createOrUpdate(checkin.getPlace());
-				getUserDao().createOrUpdate(checkin.getUser());
-				getCheckinDao().createOrUpdate(checkin);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		updateCheckins();
 	}
 
 	@Override
@@ -64,14 +41,16 @@ public class TimelineFragment extends SherlockFragment {
 		case R.id.refresh:
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(
 					true);
-			getCheckins();
+			
+			getUdrunkActivity().retrieveCheckins();
+			
 			return true;
 		}
 		return (super.onOptionsItemSelected(item));
 	}
 
 	@UiThread
-	void updateCheckins() {
+	public void updateCheckins() {
 		List<Checkin> checkins = null;
 		try {
 			checkins = getCheckinDao().queryForAll();
@@ -82,8 +61,6 @@ public class TimelineFragment extends SherlockFragment {
 		CheckinAdapter adapter = new CheckinAdapter(getActivity(),
 				R.layout.list_feed_item, checkins);
 		listView.setAdapter(adapter);
-
-		getUdrunkActivity().hideProgress();
 	}
 
 	protected UdrunkActivity getUdrunkActivity() {
@@ -92,13 +69,5 @@ public class TimelineFragment extends SherlockFragment {
 
 	protected Dao<Checkin, Integer> getCheckinDao() throws SQLException {
 		return getUdrunkActivity().getDBHelper().getCheckinDao();
-	}
-
-	protected Dao<Place, Integer> getPlaceDao() throws SQLException {
-		return getUdrunkActivity().getDBHelper().getPlaceDao();
-	}
-
-	protected Dao<User, Integer> getUserDao() throws SQLException {
-		return getUdrunkActivity().getDBHelper().getUserDao();
 	}
 }
