@@ -9,27 +9,42 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CheckinAdapter extends ArrayAdapter<Checkin> {
+public class CheckinAdapter extends BaseAdapter {
 
 	private List<Checkin> items;
+	private Context context;
 
 	public CheckinAdapter(Context context, int textViewResourceId,
 			List<Checkin> items) {
-		super(context, textViewResourceId, items);
+		super();
+		this.context = context;
 		this.items = items;
+	}
+
+	public int getCount() {
+		return items.size();
+	}
+
+	public Object getItem(int position) {
+		return items.get(position);
+	}
+	
+	/** Use the array index as a unique id. */
+	public long getItemId(int position) {
+		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null) {
-			LayoutInflater vi = (LayoutInflater) getContext().getSystemService(
+			LayoutInflater vi = (LayoutInflater) context.getSystemService(
 					Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.list_feed_item, null);
+			v = vi.inflate(R.layout.list_feed_item, parent, false);
 		}
 		Checkin feed = items.get(position);
 		if (feed != null) {

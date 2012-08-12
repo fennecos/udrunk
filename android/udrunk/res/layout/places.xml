@@ -8,6 +8,7 @@
         android:id="@+id/listView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
+        <!-- Preview: listitem=@layout/list_place_item -->
     </ListView>
 
 </LinearLayout>

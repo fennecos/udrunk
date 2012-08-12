@@ -6,17 +6,19 @@
     <ImageView 
         android:id="@+id/img_avatar"
         android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_height="fill_parent"
         android:scaleType="centerCrop"
         android:contentDescription="@string/img_description_avatar"
         />
     <RelativeLayout
         android:id="@+id/centralLayout"
         android:layout_width="fill_parent"
-	    android:layout_height="48dp"
+	    android:layout_height="fill_parent"
 	    android:layout_toRightOf="@id/img_avatar"
 	    android:paddingLeft="8dp"
-	    android:paddingRight="8dp">
+	    android:paddingRight="8dp"
+	    android:paddingTop="4dp"
+	    android:paddingBottom="4dp">
         
 	    <TextView
 	        android:id="@+id/txt_status"

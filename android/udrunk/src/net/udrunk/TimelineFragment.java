@@ -37,12 +37,10 @@ public class TimelineFragment extends SherlockFragment {
 	@Background
 	public void getCheckins() {
 		getUdrunkActivity().showProgress();
-		
-		AllCheckinsDto checkins = ((UdrunkActivity) getActivity()).restClient
-				.getFeed();
-		
-		for(Checkin checkin : checkins.objects)
-		{
+
+		AllCheckinsDto checkins = getUdrunkActivity().restClient.getFeed();
+
+		for (Checkin checkin : checkins.objects) {
 			try {
 				getPlaceDao().createOrUpdate(checkin.getPlace());
 				getUserDao().createOrUpdate(checkin.getUser());
@@ -64,13 +62,14 @@ public class TimelineFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.refresh:
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(
+					true);
 			getCheckins();
 			return true;
 		}
 		return (super.onOptionsItemSelected(item));
 	}
-	
+
 	@UiThread
 	void updateCheckins() {
 		List<Checkin> checkins = null;
@@ -80,23 +79,25 @@ public class TimelineFragment extends SherlockFragment {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CheckinAdapter adapter = new CheckinAdapter(getActivity(), R.layout.list_feed_item, checkins);
+		CheckinAdapter adapter = new CheckinAdapter(getActivity(),
+				R.layout.list_feed_item, checkins);
 		listView.setAdapter(adapter);
-		
+
 		getUdrunkActivity().hideProgress();
 	}
-	
-	protected UdrunkActivity getUdrunkActivity()
-	{
+
+	protected UdrunkActivity getUdrunkActivity() {
 		return (UdrunkActivity) getActivity();
 	}
-	
+
 	protected Dao<Checkin, Integer> getCheckinDao() throws SQLException {
 		return getUdrunkActivity().getDBHelper().getCheckinDao();
 	}
+
 	protected Dao<Place, Integer> getPlaceDao() throws SQLException {
 		return getUdrunkActivity().getDBHelper().getPlaceDao();
 	}
+
 	protected Dao<User, Integer> getUserDao() throws SQLException {
 		return getUdrunkActivity().getDBHelper().getUserDao();
 	}
