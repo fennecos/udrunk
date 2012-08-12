@@ -1,5 +1,6 @@
 package net.udrunk.adapters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.udrunk.R;
@@ -15,14 +16,15 @@ import android.widget.TextView;
 
 public class CheckinAdapter extends BaseAdapter {
 
-	private List<Checkin> items;
+	private List<Checkin> items = new ArrayList<Checkin>();
 	private Context context;
 
 	public CheckinAdapter(Context context, int textViewResourceId,
 			List<Checkin> items) {
 		super();
 		this.context = context;
-		this.items = items;
+		if (items != null)
+			this.items = items;
 	}
 
 	public int getCount() {
@@ -32,7 +34,7 @@ public class CheckinAdapter extends BaseAdapter {
 	public Object getItem(int position) {
 		return items.get(position);
 	}
-	
+
 	/** Use the array index as a unique id. */
 	public long getItemId(int position) {
 		return position;
@@ -42,8 +44,8 @@ public class CheckinAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null) {
-			LayoutInflater vi = (LayoutInflater) context.getSystemService(
-					Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater vi = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.list_feed_item, parent, false);
 		}
 		Checkin feed = items.get(position);
@@ -62,7 +64,7 @@ public class CheckinAdapter extends BaseAdapter {
 
 			if (feed.getStatus() != null && feed.getStatus() != "") {
 				statusText.setText(feed.getStatus());
-			} 
+			}
 			if (feed.getPlace() != null && feed.getPlace().getName() != null) {
 				placeText.setText("@ " + feed.getPlace().getName());
 			}

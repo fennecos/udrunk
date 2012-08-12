@@ -1,5 +1,6 @@
 package net.udrunk.adapters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.udrunk.R;
@@ -12,14 +13,15 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class PlaceAdapater extends BaseAdapter {
-	private List<Place> items;
+	private List<Place> items = new ArrayList<Place>();
 	private Context context;
 
 	public PlaceAdapater(Context context, int textViewResourceId,
 			List<Place> items) {
 		super();
 		this.context = context;
-		this.items = items;
+		if (items != null)
+			this.items = items;
 	}
 
 	public int getCount() {
@@ -39,8 +41,8 @@ public class PlaceAdapater extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null) {
-			LayoutInflater vi = (LayoutInflater) context.getSystemService(
-					Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater vi = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.list_place_item, parent, false);
 		}
 		Place place = items.get(position);
