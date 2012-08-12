@@ -183,8 +183,16 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 			}
 		}
 	}
+	
+	public UdrunkClient getRestClient()
+	{
+		return restClient;
+	}
 
 	abstract public void onCheckinsRetieved();
 
 	abstract public void onCheckinsServiceConnected();
+	
+	abstract public void onPlacesRetieved();
+	
 }

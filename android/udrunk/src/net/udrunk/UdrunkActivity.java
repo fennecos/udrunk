@@ -2,6 +2,7 @@ package net.udrunk;
 
 import java.util.ArrayList;
 
+import net.udrunk.services.PlacesBackgroundTask;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 
 import com.actionbarsherlock.view.Window;
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
 import com.googlecode.androidannotations.annotations.UiThread;
@@ -40,10 +42,14 @@ public class UdrunkActivity extends CommonActivity {
 
 	@AnimationRes(R.anim.share_button_anim)
 	public Animation shareAnim;
+	
+	@Bean
+	PlacesBackgroundTask placesTask;
 
 	private static ArrayList<Fragment> fragmentList;
 
 	private TimelineFragment timelineFragment;
+	private PlacesFragment placesFragment;
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -59,7 +65,8 @@ public class UdrunkActivity extends CommonActivity {
 		fragmentList = new ArrayList<Fragment>();
 		timelineFragment = new TimelineFragment_();
 		fragmentList.add(timelineFragment);
-		fragmentList.add(new PlacesFragment_());
+		placesFragment = new PlacesFragment_();
+		fragmentList.add(placesFragment);
 
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());
@@ -69,6 +76,8 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
+		
+		placesTask.retrievePlaces();
 
 	}
 
@@ -135,6 +144,11 @@ public class UdrunkActivity extends CommonActivity {
 	public void onCheckinsServiceConnected() {
 		retrieveCheckins();
 		showProgress();
+	}
+
+	@Override
+	public void onPlacesRetieved() {
+		placesFragment.updatePlaces();
 	}
 
 }
