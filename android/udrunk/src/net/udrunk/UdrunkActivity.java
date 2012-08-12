@@ -127,9 +127,14 @@ public class UdrunkActivity extends CommonActivity {
 
 	@Override
 	public void onCheckinsRetieved() {
-
 		timelineFragment.updateCheckins();
 		hideProgress();
+	}
+
+	@Override
+	public void onCheckinsServiceConnected() {
+		retrieveCheckins();
+		showProgress();
 	}
 
 }

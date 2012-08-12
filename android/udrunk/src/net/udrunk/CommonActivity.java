@@ -49,6 +49,11 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 		initAuth();
 		super.onCreate(savedInstanceState);
 	}
+	
+	public UdrunkApplication getUdrunkApplication()
+	{
+		return (UdrunkApplication) getApplication();
+	}
 
 	protected DataBaseHelper getDBHelper() {
 		if (databaseHelper == null) {
@@ -57,7 +62,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 		}
 		return databaseHelper;
 	}
-	
+
 	public void initAuth() {
 
 		// This should of course be extracted into a separate class
@@ -99,32 +104,32 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 	}
 
 	void doBindService() {
-		mIsBound  = true;
+		mIsBound = true;
 		bindService(new Intent(this, CheckinService_.class), mConnection,
 				Context.BIND_AUTO_CREATE);
 	}
-	
-	void doUnbindService() {
-	    if (mIsBound) {
-	        // If we have received the service, and hence registered with
-	        // it, then now is the time to unregister.
-	        if (checkinServiceMessenger != null) {
-	            try {
-	                Message msg = Message.obtain(null,
-	                        CheckinService.MSG_UNREGISTER_CLIENT);
-	                msg.replyTo = inMessenger;
-	                checkinServiceMessenger.send(msg);
-	            } catch (RemoteException e) {
-	                // There is nothing special we need to do if the service
-	                // has crashed.
-	            }
-	        }
 
-	        // Detach our existing connection.
-	        unbindService(mConnection);
-	        mIsBound = false;
-	        Toast.makeText(this, "Unbinding", Toast.LENGTH_SHORT);
-	    }
+	void doUnbindService() {
+		if (mIsBound) {
+			// If we have received the service, and hence registered with
+			// it, then now is the time to unregister.
+			if (checkinServiceMessenger != null) {
+				try {
+					Message msg = Message.obtain(null,
+							CheckinService.MSG_UNREGISTER_CLIENT);
+					msg.replyTo = inMessenger;
+					checkinServiceMessenger.send(msg);
+				} catch (RemoteException e) {
+					// There is nothing special we need to do if the service
+					// has crashed.
+				}
+			}
+
+			// Detach our existing connection.
+			unbindService(mConnection);
+			mIsBound = false;
+			Toast.makeText(this, "Unbinding", Toast.LENGTH_SHORT);
+		}
 	}
 
 	class IncomingHandler extends Handler {
@@ -132,6 +137,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case CheckinService.MSG_GET_CHECKINS:
+				getUdrunkApplication().checkinsLoading = false;
 				Toast.makeText(CommonActivity.this, "Checkin retieved",
 						Toast.LENGTH_SHORT).show();
 				onCheckinsRetieved();
@@ -152,8 +158,8 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 						CheckinService.MSG_REGISTER_CLIENT);
 				msg.replyTo = inMessenger;
 				checkinServiceMessenger.send(msg);
+				onCheckinsServiceConnected();
 
-				retrieveCheckins();
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -163,18 +169,22 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 			checkinServiceMessenger = null;
 		}
 	};
-	
-	public void retrieveCheckins()
-	{
-		Toast.makeText(this, "Retieving Checkins", Toast.LENGTH_SHORT).show();
-		Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
-		try {
-			checkinServiceMessenger.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
+
+	public void retrieveCheckins() {
+		if (!getUdrunkApplication().checkinsLoading) {
+			getUdrunkApplication().checkinsLoading = true;
+			Toast.makeText(this, "Retieving Checkins", Toast.LENGTH_SHORT)
+					.show();
+			Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
+			try {
+				checkinServiceMessenger.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
-		
 	}
-	
+
 	abstract public void onCheckinsRetieved();
+
+	abstract public void onCheckinsServiceConnected();
 }

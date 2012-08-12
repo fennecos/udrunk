@@ -25,4 +25,6 @@ public class UdrunkApplication extends Application {
 	public void setPlaces(List<Place> places) {
 		this.places = places;
 	}
+	
+	public boolean checkinsLoading;
 }

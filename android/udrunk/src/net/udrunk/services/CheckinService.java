@@ -14,10 +14,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.EService;
-import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -35,15 +33,6 @@ public class CheckinService extends Service {
 		return inMessenger.getBinder();
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onCreate();
-
-		getCheckins();
-
-		return Service.START_NOT_STICKY;
-	}
-
 	public void getCheckins() {
 
 		AllCheckinsDto checkins = restClient.getFeed();
@@ -57,13 +46,6 @@ public class CheckinService extends Service {
 				e.printStackTrace();
 			}
 		}
-
-		showNotification();
-	}
-
-	@UiThread
-	public void showNotification() {
-		Toast.makeText(this, "service checkin done", Toast.LENGTH_LONG);
 	}
 
 	protected DataBaseHelper getDBHelper() {
@@ -100,7 +82,7 @@ public class CheckinService extends Service {
 			case MSG_GET_CHECKINS:
 
 				getCheckins();
-				
+
 				for (int i = outMessengers.size() - 1; i >= 0; i--) {
 					try {
 						outMessengers.get(i).send(
@@ -112,6 +94,7 @@ public class CheckinService extends Service {
 						outMessengers.remove(i);
 					}
 				}
+
 				break;
 			default:
 				super.handleMessage(msg);
