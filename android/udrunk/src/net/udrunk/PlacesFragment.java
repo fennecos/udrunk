@@ -1,11 +1,13 @@
 package net.udrunk;
 
 import net.udrunk.adapters.PlaceAdapater;
+import net.udrunk.model.Model;
 import net.udrunk.services.UdrunkClient;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -20,6 +22,9 @@ public class PlacesFragment extends SherlockFragment {
 	@RestService
 	public UdrunkClient restClient;
 	
+	@Bean
+	public Model model;
+	
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
@@ -30,7 +35,7 @@ public class PlacesFragment extends SherlockFragment {
 	void updatePlaces() {
 		
 		PlaceAdapater adapter = new PlaceAdapater(getActivity(),
-				R.layout.list_place_item, getCommonActivity().getUdrunkApplication().getPlaces());
+				R.layout.list_place_item, model.getPlaces());
 		listView.setAdapter(adapter);
 	}
 	

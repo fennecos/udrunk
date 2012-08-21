@@ -3,6 +3,8 @@ package net.udrunk;
 import java.io.IOException;
 
 import net.udrunk.infra.DataBaseHelper;
+import net.udrunk.model.Model;
+import net.udrunk.model.Model_;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.CheckinService_;
 import net.udrunk.services.UdrunkClient;
@@ -41,10 +43,13 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 	private Messenger inMessenger = new Messenger(new IncomingHandler());
 
 	protected boolean mIsBound = false;
+	
+	public Model model;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
+		model = Model_.getInstance_(this);
 		restClient = new UdrunkClient_();
 		initAuth();
 		super.onCreate(savedInstanceState);
@@ -128,7 +133,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 			// Detach our existing connection.
 			unbindService(mConnection);
 			mIsBound = false;
-			Toast.makeText(this, "Unbinding", Toast.LENGTH_SHORT);
+			Toast.makeText(this, "Unbinding", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -137,7 +142,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case CheckinService.MSG_GET_CHECKINS:
-				getUdrunkApplication().checkinsLoading = false;
+				model.checkinsLoading = false;
 				Toast.makeText(CommonActivity.this, "Checkin retieved",
 						Toast.LENGTH_SHORT).show();
 				onCheckinsRetieved();
@@ -171,8 +176,8 @@ public abstract class CommonActivity extends SherlockFragmentActivity {
 	};
 
 	public void retrieveCheckins() {
-		if (!getUdrunkApplication().checkinsLoading) {
-			getUdrunkApplication().checkinsLoading = true;
+		if (!model.checkinsLoading) {
+			model.checkinsLoading = true;
 			Toast.makeText(this, "Retieving Checkins", Toast.LENGTH_SHORT)
 					.show();
 			Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
