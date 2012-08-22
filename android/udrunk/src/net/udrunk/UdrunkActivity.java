@@ -1,6 +1,7 @@
 package net.udrunk;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 import net.udrunk.model.Model;
 import android.content.Intent;
@@ -77,7 +78,7 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
 		
-		model.placesTask.retrievePlaces();
+		model.retrievePlaces();
 
 	}
 
@@ -134,18 +135,21 @@ public class UdrunkActivity extends CommonActivity {
 		}
 	}
 
-	public void onCheckinsRetieved() {
-		timelineFragment.updateCheckins();
-		hideProgress();
-	}
-
-	public void onCheckinsServiceConnected() {
-		model.retrieveCheckins();
-		showProgress();
-	}
-
-	public void onPlacesRetieved() {
-		placesFragment.updatePlaces();
+	@Override
+	public void update(Observable observable, Object data) {
+		if(data.equals( Model.CHECKINS_UPDATING ))
+		{
+			showProgress();
+		}
+		if(data.equals( Model.CHECKINS_UPDATED ))
+		{
+			timelineFragment.updateCheckins();
+			hideProgress();
+		}
+		if(data.equals( Model.PLACES_UPDATED ))
+		{
+			placesFragment.updatePlaces();
+		}
 	}
 
 }

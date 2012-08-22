@@ -1,5 +1,9 @@
 package net.udrunk;
 
+import java.util.Observable;
+
+import net.udrunk.model.Model;
+
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.FragmentById;
@@ -15,4 +19,11 @@ public class ShareActivity extends CommonActivity {
 		placesFragment.updatePlaces();
 	}
 	
+	@Override
+	public void update(Observable observable, Object data) {
+		if(data.equals( Model.PLACES_UPDATED ))
+		{
+			placesFragment.updatePlaces();
+		}
+	}
 }

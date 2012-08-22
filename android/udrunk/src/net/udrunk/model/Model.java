@@ -39,14 +39,18 @@ import com.googlecode.androidannotations.api.Scope;
 @EBean(scope = Scope.Singleton)
 public class Model extends Observable {
 
+	public static final int CHECKINS_UPDATING = 0;
+	public static final int CHECKINS_UPDATED = 1;
+	public static final int PLACES_UPDATED = 1;
+
 	@RootContext
 	public Context context;
-	
+
 	@RestService
 	public UdrunkClient restClient;
-	
+
 	@Bean
-	public PlacesBackgroundTask placesTask;
+	protected PlacesBackgroundTask placesTask;
 
 	private List<Place> places;
 
@@ -59,6 +63,7 @@ public class Model extends Observable {
 	}
 
 	public boolean checkinsLoading;
+	public boolean placesLoading;
 
 	@AfterInject
 	public void doSomethingAfterInjection() {
@@ -91,7 +96,15 @@ public class Model extends Observable {
 		rt.setInterceptors(interceptors);
 
 	}
-	
+
+	public void retrievePlaces() {
+		if (!placesLoading)
+		{
+			placesLoading = true;
+			placesTask.retrievePlaces();
+		}
+	}
+
 	/**
 	 * 
 	 * CHECKIN SERICE
@@ -132,7 +145,7 @@ public class Model extends Observable {
 		}
 	}
 
-	@SuppressLint("HandlerLeak") 
+	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -172,6 +185,9 @@ public class Model extends Observable {
 	};
 
 	public void retrieveCheckins() {
+		setChanged();
+		notifyObservers(CHECKINS_UPDATING);
+
 		if (!checkinsLoading) {
 			checkinsLoading = true;
 			Toast.makeText(context, "Retieving Checkins", Toast.LENGTH_SHORT)
@@ -186,7 +202,8 @@ public class Model extends Observable {
 	}
 
 	public void onCheckinsRetieved() {
-
+		setChanged();
+		notifyObservers(CHECKINS_UPDATED);
 	}
 
 	public void onCheckinsServiceConnected() {
@@ -194,6 +211,8 @@ public class Model extends Observable {
 	}
 
 	public void onPlacesRetieved() {
-
+		placesLoading = false;
+		setChanged();
+		notifyObservers(PLACES_UPDATED);
 	}
 }
