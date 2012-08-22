@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Observable;
 
 import net.udrunk.domain.Place;
+import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.CheckinService_;
-import net.udrunk.services.PlacesBackgroundTask;
 import net.udrunk.services.UdrunkClient;
 
 import org.springframework.http.HttpHeaders;
@@ -30,9 +30,10 @@ import android.os.RemoteException;
 import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterInject;
-import com.googlecode.androidannotations.annotations.Bean;
+import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
+import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.googlecode.androidannotations.api.Scope;
 
@@ -48,9 +49,6 @@ public class Model extends Observable {
 
 	@RestService
 	public UdrunkClient restClient;
-
-	@Bean
-	protected PlacesBackgroundTask placesTask;
 
 	private List<Place> places;
 
@@ -97,11 +95,21 @@ public class Model extends Observable {
 
 	}
 
+	/**
+	 * 
+	 * PLACE SERICE
+	 * 
+	 */
+	
+	@Background
 	public void retrievePlaces() {
-		if (!placesLoading)
-		{
+
+		if (!placesLoading) {
 			placesLoading = true;
-			placesTask.retrievePlaces();
+			AllPlacesDto placesDto = restClient.getPlaces();
+
+			setPlaces(placesDto.objects);
+			onPlacesRetieved();
 		}
 	}
 
@@ -210,6 +218,7 @@ public class Model extends Observable {
 
 	}
 
+	@UiThread
 	public void onPlacesRetieved() {
 		placesLoading = false;
 		setChanged();

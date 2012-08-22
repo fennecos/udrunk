@@ -23,14 +23,17 @@ public class PlacesFragment extends SherlockFragment {
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
+		updatePlaces();
 	}
 
 	@UiThread
 	void updatePlaces() {
-		
-		PlaceAdapater adapter = new PlaceAdapater(getActivity(),
-				R.layout.list_place_item, model.getPlaces());
-		listView.setAdapter(adapter);
+		if(model != null)
+		{
+			PlaceAdapater adapter = new PlaceAdapater(getActivity(),
+					R.layout.list_place_item, model.getPlaces());
+			listView.setAdapter(adapter);
+		}
 	}
 	
 	public CommonActivity getCommonActivity()
