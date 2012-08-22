@@ -1,11 +1,14 @@
 package net.udrunk.model;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
 
+import net.udrunk.domain.Checkin;
 import net.udrunk.domain.Place;
 import net.udrunk.domain.dto.AllPlacesDto;
+import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.CheckinService_;
 import net.udrunk.services.UdrunkClient;
@@ -36,6 +39,7 @@ import com.googlecode.androidannotations.annotations.RootContext;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.googlecode.androidannotations.api.Scope;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 @EBean(scope = Scope.Singleton)
 public class Model extends Observable {
@@ -49,6 +53,8 @@ public class Model extends Observable {
 
 	@RestService
 	public UdrunkClient restClient;
+	
+	private DataBaseHelper databaseHelper;
 
 	private List<Place> places;
 
@@ -58,6 +64,24 @@ public class Model extends Observable {
 
 	public void setPlaces(List<Place> places) {
 		this.places = places;
+	}
+	
+	public List<Checkin> getCheckins()
+	{
+		try {
+			return getDBHelper().getCheckinDao().queryForAll();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	protected DataBaseHelper getDBHelper() {
+		if (databaseHelper == null) {
+			databaseHelper = OpenHelperManager.getHelper(context,
+					DataBaseHelper.class);
+		}
+		return databaseHelper;
 	}
 
 	public boolean checkinsLoading;
@@ -69,6 +93,12 @@ public class Model extends Observable {
 		doBindService();
 	}
 
+	/**
+	 * 
+	 * INIT AUTHENTIFICATION
+	 * 
+	 */
+	
 	public void initAuth() {
 
 		// This should of course be extracted into a separate class

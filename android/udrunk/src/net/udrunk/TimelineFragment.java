@@ -1,6 +1,5 @@
 package net.udrunk;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import net.udrunk.adapters.CheckinAdapter;
@@ -17,7 +16,6 @@ import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
-import com.j256.ormlite.dao.Dao;
 
 @EFragment(R.layout.timeline)
 public class TimelineFragment extends SherlockFragment {
@@ -56,13 +54,8 @@ public class TimelineFragment extends SherlockFragment {
 
 	@UiThread
 	public void updateCheckins() {
-		List<Checkin> checkins = null;
-		try {
-			checkins = getCheckinDao().queryForAll();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		List<Checkin> checkins = model.getCheckins();
+		
 		CheckinAdapter adapter = new CheckinAdapter(getActivity(),
 				R.layout.list_feed_item, checkins);
 		listView.setAdapter(adapter);
@@ -70,9 +63,5 @@ public class TimelineFragment extends SherlockFragment {
 
 	protected UdrunkActivity getUdrunkActivity() {
 		return (UdrunkActivity) getActivity();
-	}
-
-	protected Dao<Checkin, Integer> getCheckinDao() throws SQLException {
-		return getUdrunkActivity().getDBHelper().getCheckinDao();
 	}
 }
