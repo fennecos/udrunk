@@ -2,7 +2,7 @@ package net.udrunk;
 
 import java.util.ArrayList;
 
-import net.udrunk.services.PlacesBackgroundTask;
+import net.udrunk.model.Model;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -44,7 +44,7 @@ public class UdrunkActivity extends CommonActivity {
 	public Animation shareAnim;
 	
 	@Bean
-	PlacesBackgroundTask placesTask;
+	public Model model;
 
 	private static ArrayList<Fragment> fragmentList;
 
@@ -77,7 +77,7 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
 		
-		placesTask.retrievePlaces();
+		model.placesTask.retrievePlaces();
 
 	}
 
@@ -134,19 +134,16 @@ public class UdrunkActivity extends CommonActivity {
 		}
 	}
 
-	@Override
 	public void onCheckinsRetieved() {
 		timelineFragment.updateCheckins();
 		hideProgress();
 	}
 
-	@Override
 	public void onCheckinsServiceConnected() {
-		retrieveCheckins();
+		model.retrieveCheckins();
 		showProgress();
 	}
 
-	@Override
 	public void onPlacesRetieved() {
 		placesFragment.updatePlaces();
 	}

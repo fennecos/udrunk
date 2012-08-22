@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.udrunk.adapters.CheckinAdapter;
 import net.udrunk.domain.Checkin;
+import net.udrunk.model.Model;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -12,6 +13,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -22,6 +24,9 @@ public class TimelineFragment extends SherlockFragment {
 
 	@ViewById
 	ListView listView;
+	
+	@Bean
+	public Model model;
 
 	@AfterViews
 	public void afterViews() {
@@ -42,7 +47,7 @@ public class TimelineFragment extends SherlockFragment {
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(
 					true);
 			
-			getUdrunkActivity().retrieveCheckins();
+			model.retrieveCheckins();
 			
 			return true;
 		}

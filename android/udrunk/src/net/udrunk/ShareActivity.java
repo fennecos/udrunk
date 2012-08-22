@@ -15,21 +15,4 @@ public class ShareActivity extends CommonActivity {
 		placesFragment.updatePlaces();
 	}
 	
-	@Override
-	public void onCheckinsRetieved() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onCheckinsServiceConnected() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onPlacesRetieved() {
-		placesFragment.updatePlaces();
-	}
-
 }
