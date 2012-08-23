@@ -58,7 +58,7 @@ public class CheckinAdapter extends BaseAdapter {
 			TextView dateText = (TextView) v.findViewById(R.id.txt_date);
 
 			nameText.setText(feed.getUser().getUsername());
-			UdrunkApplication.imageLoader.bind(avatarImg, feed.getUser()
+			((UdrunkApplication)context.getApplicationContext()).imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
 			dateText.setText(feed.getAdded());
 
