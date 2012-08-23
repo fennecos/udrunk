@@ -10,4 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <fragment
+        android:id="@+id/shareFragment"
+        android:name="net.udrunk.ShareFragment_"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
 </LinearLayout>

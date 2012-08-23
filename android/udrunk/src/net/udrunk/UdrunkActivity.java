@@ -19,7 +19,6 @@ import android.widget.ImageButton;
 
 import com.actionbarsherlock.view.Window;
 import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
 import com.googlecode.androidannotations.annotations.UiThread;
@@ -44,9 +43,6 @@ public class UdrunkActivity extends CommonActivity {
 	@AnimationRes(R.anim.share_button_anim)
 	public Animation shareAnim;
 	
-	@Bean
-	public Model model;
-
 	private static ArrayList<Fragment> fragmentList;
 
 	private TimelineFragment timelineFragment;

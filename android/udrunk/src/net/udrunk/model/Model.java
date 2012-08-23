@@ -7,6 +7,7 @@ import java.util.Observable;
 
 import net.udrunk.domain.Checkin;
 import net.udrunk.domain.Place;
+import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.services.CheckinService;
@@ -53,10 +54,17 @@ public class Model extends Observable {
 
 	@RestService
 	public UdrunkClient restClient;
-	
+
 	private DataBaseHelper databaseHelper;
 
 	private List<Place> places;
+
+	public User getCurrentUser() {
+		User result = new User();
+		result.setId(1);
+		result.setUsername("valentin");
+		return result;
+	}
 
 	public List<Place> getPlaces() {
 		return places;
@@ -65,9 +73,8 @@ public class Model extends Observable {
 	public void setPlaces(List<Place> places) {
 		this.places = places;
 	}
-	
-	public List<Checkin> getCheckins()
-	{
+
+	public List<Checkin> getCheckins() {
 		try {
 			return getDBHelper().getCheckinDao().queryForAll();
 		} catch (SQLException e) {
@@ -98,7 +105,7 @@ public class Model extends Observable {
 	 * INIT AUTHENTIFICATION
 	 * 
 	 */
-	
+
 	public void initAuth() {
 
 		// This should of course be extracted into a separate class
@@ -112,6 +119,7 @@ public class Model extends Observable {
 
 				String username = "valentin";
 				String key = "valentin";
+
 				headers.set("Authorization", "ApiKey " + username + ":" + key);
 
 				return execution.execute(request, body);
@@ -127,10 +135,10 @@ public class Model extends Observable {
 
 	/**
 	 * 
-	 * PLACE SERICE
+	 * PLACE SERVICE
 	 * 
 	 */
-	
+
 	@Background
 	public void retrievePlaces() {
 
@@ -143,9 +151,16 @@ public class Model extends Observable {
 		}
 	}
 
+	@UiThread
+	public void onPlacesRetieved() {
+		placesLoading = false;
+		setChanged();
+		notifyObservers(PLACES_UPDATED);
+	}
+
 	/**
 	 * 
-	 * CHECKIN SERICE
+	 * CHECKIN SERVICE
 	 * 
 	 */
 	private Messenger checkinServiceMessenger = null;
@@ -222,6 +237,7 @@ public class Model extends Observable {
 		}
 	};
 
+	@UiThread
 	public void retrieveCheckins() {
 		setChanged();
 		notifyObservers(CHECKINS_UPDATING);
@@ -248,10 +264,10 @@ public class Model extends Observable {
 
 	}
 
-	@UiThread
-	public void onPlacesRetieved() {
-		placesLoading = false;
-		setChanged();
-		notifyObservers(PLACES_UPDATED);
+	@Background
+	public void insertCheckin(Checkin checkin) {
+		restClient.insertCheckin(checkin);
+		retrieveCheckins();
 	}
+
 }

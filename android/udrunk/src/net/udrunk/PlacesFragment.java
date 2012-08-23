@@ -1,6 +1,7 @@
 package net.udrunk;
 
 import net.udrunk.adapters.PlaceAdapater;
+import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.widget.ListView;
 
@@ -8,6 +9,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.ItemClick;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
@@ -36,8 +38,11 @@ public class PlacesFragment extends SherlockFragment {
 		}
 	}
 	
-	public CommonActivity getCommonActivity()
-	{
-		return (CommonActivity)getActivity();
-	}
+	@ItemClick
+    public void listViewItemClicked(Place place) {
+		if(getActivity() instanceof ShareActivity)
+		{
+			((ShareActivity)getActivity()).showShareFragment(place);
+		}
+    }
 }
