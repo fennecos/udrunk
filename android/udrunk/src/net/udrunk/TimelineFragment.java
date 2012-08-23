@@ -54,11 +54,14 @@ public class TimelineFragment extends SherlockFragment {
 
 	@UiThread
 	public void updateCheckins() {
-		List<Checkin> checkins = model.getCheckins();
-		
-		CheckinAdapter adapter = new CheckinAdapter(getActivity(),
-				R.layout.list_feed_item, checkins);
-		listView.setAdapter(adapter);
+		if(model != null)
+		{
+			List<Checkin> checkins = model.getCheckins();
+			
+			CheckinAdapter adapter = new CheckinAdapter(getActivity(),
+					R.layout.list_feed_item, checkins);
+			listView.setAdapter(adapter);
+		}
 	}
 
 	protected UdrunkActivity getUdrunkActivity() {

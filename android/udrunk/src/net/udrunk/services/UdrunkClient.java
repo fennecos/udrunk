@@ -6,6 +6,7 @@ import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllCheckinsDto;
 import net.udrunk.domain.dto.AllPlacesDto;
 
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.googlecode.androidannotations.annotations.rest.Get;
@@ -26,7 +27,7 @@ public interface UdrunkClient {
 	User insertUser(User user);
 
 	@Post("/api/v1/checkin/")
-	Checkin insertCheckin(Checkin Checkin);
+	Checkin insertCheckin(Checkin Checkin) throws RestClientException;
 	
 	RestTemplate getRestTemplate();
 	void setRestTemplate(RestTemplate restTemplate);

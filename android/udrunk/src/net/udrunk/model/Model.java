@@ -19,6 +19,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import android.annotation.SuppressLint;
@@ -266,8 +267,22 @@ public class Model extends Observable {
 
 	@Background
 	public void insertCheckin(Checkin checkin) {
-		restClient.insertCheckin(checkin);
-		retrieveCheckins();
+		try {
+			restClient.insertCheckin(checkin);
+		} catch (RestClientException e) {
+			e.printStackTrace();
+			showErrorToast(e.getMessage());
+		}
+		finally
+		{
+			retrieveCheckins();
+		}
+	}
+	
+	@UiThread
+	public void showErrorToast(String message)
+	{
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 
 }
