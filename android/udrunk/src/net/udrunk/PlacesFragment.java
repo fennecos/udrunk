@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
@@ -27,6 +30,21 @@ public class PlacesFragment extends SherlockFragment {
 	public void afterViews() {
 		setHasOptionsMenu(true);
 		updatePlaces();
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.places_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.map_item_menu:
+			return true;
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 
 	@UiThread

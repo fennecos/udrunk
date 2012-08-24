@@ -3,6 +3,8 @@ package net.udrunk;
 import net.udrunk.domain.Place;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Extra;
@@ -24,5 +26,20 @@ public class PlaceDetailsActivity extends CommonActivity {
 	public void afterViews() {
 		txtName.setText(currentPlace.getName());
 		txtCity.setText(currentPlace.getCity());
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.places_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.map_item_menu:
+			return true;
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 }

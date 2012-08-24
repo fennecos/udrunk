@@ -102,7 +102,7 @@ public class UdrunkActivity extends CommonActivity {
 	void showProgress() {
 		if(menu != null)
 		{
-			MenuItem refreshItem = menu.findItem(R.id.refresh);
+			MenuItem refreshItem = menu.findItem(R.id.refresh_item_menu);
 
 			if (refreshItem != null) {
 				refreshItem.setActionView(R.layout.refresh_menuitem);
@@ -114,7 +114,7 @@ public class UdrunkActivity extends CommonActivity {
 	void hideProgress() {
 		if(menu != null)
 		{
-			MenuItem refreshItem = menu.findItem(R.id.refresh);
+			MenuItem refreshItem = menu.findItem(R.id.refresh_item_menu);
 
 			if (refreshItem != null) {
 				refreshItem.setActionView(null);

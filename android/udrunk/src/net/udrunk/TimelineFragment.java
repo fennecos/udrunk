@@ -41,12 +41,8 @@ public class TimelineFragment extends SherlockFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.refresh:
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(
-					true);
-			
+		case R.id.refresh_item_menu:
 			model.retrieveCheckins();
-			
 			return true;
 		}
 		return (super.onOptionsItemSelected(item));
