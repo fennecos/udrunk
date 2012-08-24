@@ -4,6 +4,7 @@
     <item
         android:id="@+id/refresh"
         android:showAsAction="always"
+        android:icon="@drawable/navigation_refresh"
         android:title="refresh">
     </item>
 

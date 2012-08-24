@@ -13,11 +13,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 
-import com.actionbarsherlock.view.Window;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
@@ -42,16 +40,13 @@ public class UdrunkActivity extends CommonActivity {
 
 	@AnimationRes(R.anim.share_button_anim)
 	public Animation shareAnim;
-	
+
 	private static ArrayList<Fragment> fragmentList;
 
 	private TimelineFragment timelineFragment;
 	private PlacesFragment placesFragment;
 
 	public void onCreate(Bundle savedInstanceState) {
-
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setSupportProgressBarIndeterminateVisibility(true);
 
 		super.onCreate(savedInstanceState);
 	}
@@ -73,8 +68,12 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
-		
+
 		model.retrievePlaces();
+
+		if (model.checkinsLoading) {
+			showProgress();
+		}
 
 	}
 
@@ -95,14 +94,13 @@ public class UdrunkActivity extends CommonActivity {
 
 	@UiThread
 	void showProgress() {
-		findViewById(R.id.refresh).setVisibility(View.GONE);
-		setSupportProgressBarIndeterminateVisibility(true);
+		menu.findItem(R.id.refresh).setActionView(R.layout.refresh_menuitem);
+
 	}
 
 	@UiThread
 	void hideProgress() {
-		findViewById(R.id.refresh).setVisibility(View.VISIBLE);
-		setSupportProgressBarIndeterminateVisibility(false);
+		menu.findItem(R.id.refresh).setActionView(null);
 	}
 
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -133,17 +131,14 @@ public class UdrunkActivity extends CommonActivity {
 
 	@Override
 	public void update(Observable observable, Object data) {
-		if(data.equals( Model.CHECKINS_UPDATING ))
-		{
+		if (data.equals(Model.CHECKINS_UPDATING)) {
 			showProgress();
 		}
-		if(data.equals( Model.CHECKINS_UPDATED ))
-		{
+		if (data.equals(Model.CHECKINS_UPDATED)) {
 			timelineFragment.updateCheckins();
 			hideProgress();
 		}
-		if(data.equals( Model.PLACES_UPDATED ))
-		{
+		if (data.equals(Model.PLACES_UPDATED)) {
 			placesFragment.updatePlaces();
 		}
 	}
