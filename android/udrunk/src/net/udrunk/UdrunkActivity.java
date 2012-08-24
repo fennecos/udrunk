@@ -16,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
@@ -69,12 +71,16 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
 
+		model.retrieveCheckins();
 		model.retrievePlaces();
-
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 		if (model.checkinsLoading) {
 			showProgress();
 		}
-
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Touch(R.id.btn_share)
@@ -94,13 +100,26 @@ public class UdrunkActivity extends CommonActivity {
 
 	@UiThread
 	void showProgress() {
-		menu.findItem(R.id.refresh).setActionView(R.layout.refresh_menuitem);
+		if(menu != null)
+		{
+			MenuItem refreshItem = menu.findItem(R.id.refresh);
 
+			if (refreshItem != null) {
+				refreshItem.setActionView(R.layout.refresh_menuitem);
+			}
+		}
 	}
 
 	@UiThread
 	void hideProgress() {
-		menu.findItem(R.id.refresh).setActionView(null);
+		if(menu != null)
+		{
+			MenuItem refreshItem = menu.findItem(R.id.refresh);
+
+			if (refreshItem != null) {
+				refreshItem.setActionView(null);
+			}
+		}
 	}
 
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {

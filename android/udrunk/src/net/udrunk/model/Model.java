@@ -59,6 +59,8 @@ public class Model extends Observable {
 
 	private List<Place> places;
 
+	private Boolean connected;
+
 	public User getCurrentUser() {
 		User result = new User();
 		result.setId(1);
@@ -142,12 +144,14 @@ public class Model extends Observable {
 	@Background
 	public void retrievePlaces() {
 
-		if (!placesLoading) {
-			placesLoading = true;
-			AllPlacesDto placesDto = restClient.getPlaces();
+		if (connected) {
+			if (!placesLoading) {
+				placesLoading = true;
+				AllPlacesDto placesDto = restClient.getPlaces();
 
-			setPlaces(placesDto.objects);
-			onPlacesRetieved();
+				setPlaces(placesDto.objects);
+				onPlacesRetieved();
+			}
 		}
 	}
 
@@ -225,6 +229,7 @@ public class Model extends Observable {
 
 		public void onServiceConnected(ComponentName className, IBinder binder) {
 			checkinServiceMessenger = new Messenger(binder);
+			connected = true;
 
 			try {
 				Message msg = Message.obtain(null,
@@ -240,23 +245,26 @@ public class Model extends Observable {
 
 		public void onServiceDisconnected(ComponentName className) {
 			checkinServiceMessenger = null;
+			connected = false;
 		}
 	};
 
 	@UiThread
 	public void retrieveCheckins() {
-		setChanged();
-		notifyObservers(CHECKINS_UPDATING);
-
-		if (!checkinsLoading) {
-			checkinsLoading = true;
-			Toast.makeText(context, "Retieving Checkins", Toast.LENGTH_SHORT)
-					.show();
-			Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
-			try {
-				checkinServiceMessenger.send(msg);
-			} catch (RemoteException e) {
-				e.printStackTrace();
+		if (connected) {
+			setChanged();
+			notifyObservers(CHECKINS_UPDATING);
+	
+			if (!checkinsLoading) {
+				checkinsLoading = true;
+				Toast.makeText(context, "Retieving Checkins", Toast.LENGTH_SHORT)
+						.show();
+				Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
+				try {
+					checkinServiceMessenger.send(msg);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -277,16 +285,13 @@ public class Model extends Observable {
 		} catch (RestClientException e) {
 			e.printStackTrace();
 			showErrorToast(e.getMessage());
-		}
-		finally
-		{
+		} finally {
 			retrieveCheckins();
 		}
 	}
-	
+
 	@UiThread
-	public void showErrorToast(String message)
-	{
+	public void showErrorToast(String message) {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 
