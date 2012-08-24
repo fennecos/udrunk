@@ -42,6 +42,9 @@ public class PlacesFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.map_item_menu:
+			Intent intent = new Intent(getActivity(),
+					LocationActivity_.class);
+			startActivity(intent);
 			return true;
 		}
 		return (super.onOptionsItemSelected(item));

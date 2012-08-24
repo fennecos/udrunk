@@ -1,6 +1,7 @@
 package net.udrunk;
 
 import net.udrunk.domain.Place;
+import android.content.Intent;
 import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
@@ -38,6 +39,9 @@ public class PlaceDetailsActivity extends CommonActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.map_item_menu:
+			Intent intent = new Intent(this,
+					LocationActivity_.class);
+			startActivity(intent);
 			return true;
 		}
 		return (super.onOptionsItemSelected(item));

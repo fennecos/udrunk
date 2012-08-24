@@ -59,7 +59,7 @@ public class Model extends Observable {
 
 	private List<Place> places;
 
-	private Boolean connected;
+	private boolean connected;
 
 	public User getCurrentUser() {
 		User result = new User();
@@ -141,18 +141,21 @@ public class Model extends Observable {
 	 * 
 	 */
 
-	@Background
 	public void retrievePlaces() {
-
 		if (connected) {
 			if (!placesLoading) {
-				placesLoading = true;
-				AllPlacesDto placesDto = restClient.getPlaces();
-
-				setPlaces(placesDto.objects);
-				onPlacesRetieved();
+				retrievePlacesBackground();
 			}
 		}
+	}
+
+	@Background
+	protected void retrievePlacesBackground() {
+		placesLoading = true;
+		AllPlacesDto placesDto = restClient.getPlaces();
+
+		setPlaces(placesDto.objects);
+		onPlacesRetieved();
 	}
 
 	@UiThread
@@ -254,12 +257,13 @@ public class Model extends Observable {
 		if (connected) {
 			setChanged();
 			notifyObservers(CHECKINS_UPDATING);
-	
+
 			if (!checkinsLoading) {
 				checkinsLoading = true;
-				Toast.makeText(context, "Retieving Checkins", Toast.LENGTH_SHORT)
-						.show();
-				Message msg = Message.obtain(null, CheckinService.MSG_GET_CHECKINS);
+				Toast.makeText(context, "Retieving Checkins",
+						Toast.LENGTH_SHORT).show();
+				Message msg = Message.obtain(null,
+						CheckinService.MSG_GET_CHECKINS);
 				try {
 					checkinServiceMessenger.send(msg);
 				} catch (RemoteException e) {

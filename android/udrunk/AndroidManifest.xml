@@ -14,6 +14,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Udrunk" >
+        <uses-library android:name="com.google.android.maps" />
+
         <activity
             android:name=".UdrunkActivity_"
             android:label="@string/app_name" >
@@ -25,6 +27,7 @@
         </activity>
         <activity android:name=".ShareActivity_" />
         <activity android:name=".PlaceDetailsActivity_" />
+        <activity android:name=".LocationActivity_" />
 
         <service
             android:name="net.udrunk.services.CheckinService"
