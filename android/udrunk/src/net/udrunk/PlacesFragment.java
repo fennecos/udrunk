@@ -3,6 +3,7 @@ package net.udrunk;
 import net.udrunk.adapters.PlaceAdapater;
 import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
+import android.content.Intent;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -18,10 +19,10 @@ public class PlacesFragment extends SherlockFragment {
 
 	@ViewById
 	ListView listView;
-	
+
 	@Bean
 	public Model model;
-	
+
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
@@ -30,19 +31,22 @@ public class PlacesFragment extends SherlockFragment {
 
 	@UiThread
 	void updatePlaces() {
-		if(model != null)
-		{
+		if (model != null) {
 			PlaceAdapater adapter = new PlaceAdapater(getActivity(),
 					R.layout.list_place_item, model.getPlaces());
 			listView.setAdapter(adapter);
 		}
 	}
-	
+
 	@ItemClick
-    public void listViewItemClicked(Place place) {
-		if(getActivity() instanceof ShareActivity)
-		{
-			((ShareActivity)getActivity()).showShareFragment(place);
+	public void listViewItemClicked(Place place) {
+		if (getActivity() instanceof ShareActivity) {
+			((ShareActivity) getActivity()).showShareFragment(place);
+		} else {
+			Intent intent = new Intent(getActivity(),
+					PlaceDetailsActivity_.class);
+			intent.putExtra("place_extra", place);
+			startActivity(intent);
 		}
-    }
+	}
 }

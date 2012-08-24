@@ -8,7 +8,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+
     <application
         android:name="net.udrunk.UdrunkApplication"
         android:icon="@drawable/ic_launcher"
@@ -23,12 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShareActivity_">
-            
-        </activity>
-        
-        <service android:name="net.udrunk.services.CheckinService_"
-            android:process=":checkin_process"></service>
+        <activity android:name=".ShareActivity_" />
+        <activity android:name=".PlaceDetailsActivity_" />
+
+        <service
+            android:name="net.udrunk.services.CheckinService_"
+            android:process=":checkin_process" />
     </application>
 
 </manifest>
