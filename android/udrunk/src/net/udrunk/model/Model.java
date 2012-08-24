@@ -11,7 +11,6 @@ import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.services.CheckinService;
-import net.udrunk.services.CheckinService_;
 import net.udrunk.services.UdrunkClient;
 
 import org.springframework.http.HttpHeaders;
@@ -172,7 +171,7 @@ public class Model extends Observable {
 
 	void doBindService() {
 		mIsBound = true;
-		context.bindService(new Intent(context, CheckinService_.class),
+		context.bindService(new Intent(context, CheckinService.class),
 				mConnection, Context.BIND_AUTO_CREATE);
 	}
 
@@ -207,6 +206,12 @@ public class Model extends Observable {
 			case CheckinService.MSG_GET_CHECKINS:
 				checkinsLoading = false;
 				Toast.makeText(Model.this.context, "Checkin retieved",
+						Toast.LENGTH_SHORT).show();
+				onCheckinsRetieved();
+				break;
+			case CheckinService.MSG_GET_CHECKINS_FAILED:
+				checkinsLoading = false;
+				Toast.makeText(Model.this.context, "Checkin failed",
 						Toast.LENGTH_SHORT).show();
 				onCheckinsRetieved();
 				break;

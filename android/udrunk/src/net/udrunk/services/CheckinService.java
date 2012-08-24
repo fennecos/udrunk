@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import net.udrunk.domain.Checkin;
 import net.udrunk.domain.dto.AllCheckinsDto;
 import net.udrunk.infra.DataBaseHelper;
+
+import org.springframework.web.client.RestClientException;
+
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
@@ -15,17 +19,20 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.googlecode.androidannotations.annotations.EService;
-import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-@EService
 public class CheckinService extends Service {
 
-	@RestService
 	UdrunkClient restClient;
 
 	private DataBaseHelper databaseHelper;
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+
+		restClient = new UdrunkClient_();
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -33,7 +40,7 @@ public class CheckinService extends Service {
 		return inMessenger.getBinder();
 	}
 
-	public void getCheckins() {
+	public void getCheckins() throws RestClientException {
 
 		AllCheckinsDto checkins = restClient.getFeed();
 
@@ -59,12 +66,14 @@ public class CheckinService extends Service {
 	public static final int MSG_REGISTER_CLIENT = 1;
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_GET_CHECKINS = 3;
+	public static final int MSG_GET_CHECKINS_FAILED = 4;
 
 	// Used to receive messages from the Activity
 	final Messenger inMessenger = new Messenger(new IncomingHandler());
 	/** Keeps track of all current registered clients. */
 	ArrayList<Messenger> outMessengers = new ArrayList<Messenger>();
 
+	@SuppressLint("HandlerLeak") 
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -80,24 +89,34 @@ public class CheckinService extends Service {
 
 				break;
 			case MSG_GET_CHECKINS:
-
-				getCheckins();
-
-				for (int i = outMessengers.size() - 1; i >= 0; i--) {
-					try {
-						outMessengers.get(i).send(
-								Message.obtain(null, MSG_GET_CHECKINS));
-					} catch (RemoteException e) {
-						// The client is dead. Remove it from the list;
-						// we are going through the list from back to front
-						// so this is safe to do inside the loop.
-						outMessengers.remove(i);
-					}
+				try {
+					getCheckins();
+				} catch (RestClientException e) {
+					sendOutMessage(MSG_GET_CHECKINS_FAILED);
+					super.handleMessage(msg);
+					return;
 				}
+
+				sendOutMessage(MSG_GET_CHECKINS);
 
 				break;
 			default:
 				super.handleMessage(msg);
+			}
+		}
+		
+		public void sendOutMessage(int messageId)
+		{
+			for (int i = outMessengers.size() - 1; i >= 0; i--) {
+				try {
+					outMessengers.get(i).send(
+							Message.obtain(null, messageId));
+				} catch (RemoteException e) {
+					// The client is dead. Remove it from the list;
+					// we are going through the list from back to front
+					// so this is safe to do inside the loop.
+					outMessengers.remove(i);
+				}
 			}
 		}
 	}

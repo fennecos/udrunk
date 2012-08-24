@@ -27,7 +27,7 @@
         <activity android:name=".PlaceDetailsActivity_" />
 
         <service
-            android:name="net.udrunk.services.CheckinService_"
+            android:name="net.udrunk.services.CheckinService"
             android:process=":checkin_process" />
     </application>
 

@@ -3,17 +3,16 @@
     style="?attr/actionButtonStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:addStatesFromChildren="true"
-    android:focusable="true"
     android:gravity="center"
-    android:paddingLeft="4dip"
-    android:paddingRight="4dip" >
+    >
 
     <ProgressBar
-        style="@android:style/Widget.ProgressBar.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="?android:attr/indeterminateProgressStyle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:focusable="true" />
 
 </FrameLayout>

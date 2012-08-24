@@ -17,14 +17,14 @@ import com.googlecode.androidannotations.annotations.rest.Rest;
 public interface UdrunkClient {
 
 	@Get("/api/v1/feed/?format=json")
-	AllCheckinsDto getFeed();
+	AllCheckinsDto getFeed() throws RestClientException;
 
 	@Get("/api/v1/place/?format=json")
-	AllPlacesDto getPlaces();
+	AllPlacesDto getPlaces() throws RestClientException;
 	
 	
 	@Post("/api/v1/user/")
-	User insertUser(User user);
+	User insertUser(User user) throws RestClientException;
 
 	@Post("/api/v1/checkin/")
 	Checkin insertCheckin(Checkin Checkin) throws RestClientException;
