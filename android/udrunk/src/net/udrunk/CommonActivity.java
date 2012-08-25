@@ -10,7 +10,8 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 
-public abstract class CommonActivity extends SherlockFragmentActivity implements Observer {
+public abstract class CommonActivity extends SherlockFragmentActivity implements
+		Observer {
 
 	public Model model;
 	public Menu menu;
@@ -21,24 +22,23 @@ public abstract class CommonActivity extends SherlockFragmentActivity implements
 		model = Model_.getInstance_(this);
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		this.menu = menu;
 		return super.onCreateOptionsMenu(menu);
 	}
-	
-	public UdrunkApplication getUdrunkApplication()
-	{
+
+	public UdrunkApplication getUdrunkApplication() {
 		return (UdrunkApplication) getApplication();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		model.addObserver(this);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -47,6 +47,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public void update(Observable observable, Object data) {
-		
+
 	}
+
 }

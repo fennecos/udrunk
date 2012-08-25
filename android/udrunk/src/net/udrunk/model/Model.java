@@ -50,16 +50,16 @@ public class Model extends Observable {
 	public static final int PLACES_UPDATED = 1;
 
 	@RootContext
-	public Context context;
+	protected Context context;
 
 	@RestService
-	public UdrunkClient restClient;
+	protected UdrunkClient restClient;
 
-	private DataBaseHelper databaseHelper;
+	protected DataBaseHelper databaseHelper;
 
-	private List<Place> places;
+	protected List<Place> places;
 
-	private boolean connected;
+	protected boolean connected;
 
 	public User getCurrentUser() {
 		User result = new User();
@@ -108,7 +108,7 @@ public class Model extends Observable {
 	 * 
 	 */
 
-	public void initAuth() {
+	protected void initAuth() {
 
 		// This should of course be extracted into a separate class
 		ClientHttpRequestInterceptor authInterceptor = new ClientHttpRequestInterceptor() {
@@ -142,10 +142,8 @@ public class Model extends Observable {
 	 */
 
 	public void retrievePlaces() {
-		if (connected) {
-			if (!placesLoading) {
-				retrievePlacesBackground();
-			}
+		if (!placesLoading) {
+			retrievePlacesBackground();
 		}
 	}
 
@@ -159,7 +157,7 @@ public class Model extends Observable {
 	}
 
 	@UiThread
-	public void onPlacesRetieved() {
+	protected void onPlacesRetieved() {
 		placesLoading = false;
 		setChanged();
 		notifyObservers(PLACES_UPDATED);
@@ -173,16 +171,18 @@ public class Model extends Observable {
 	private Messenger checkinServiceMessenger = null;
 
 	private Messenger inMessenger = new Messenger(new IncomingHandler());
+	
+	private boolean checkinUpdateRequested;
 
 	protected boolean mIsBound = false;
 
-	void doBindService() {
+	protected void doBindService() {
 		mIsBound = true;
 		context.bindService(new Intent(context, CheckinService.class),
 				mConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	void doUnbindService() {
+	protected void doUnbindService() {
 		if (mIsBound) {
 			// If we have received the service, and hence registered with
 			// it, then now is the time to unregister.
@@ -271,15 +271,23 @@ public class Model extends Observable {
 				}
 			}
 		}
+		else
+		{
+			checkinUpdateRequested = true;
+		}
 	}
 
-	public void onCheckinsRetieved() {
+	protected void onCheckinsRetieved() {
 		setChanged();
 		notifyObservers(CHECKINS_UPDATED);
 	}
 
-	public void onCheckinsServiceConnected() {
-
+	protected void onCheckinsServiceConnected() {
+		if(checkinUpdateRequested)
+		{
+			checkinUpdateRequested = false;
+			retrieveCheckins();
+		}
 	}
 
 	@Background

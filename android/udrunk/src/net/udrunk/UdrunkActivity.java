@@ -74,12 +74,10 @@ public class UdrunkActivity extends CommonActivity {
 		model.retrieveCheckins();
 		model.retrievePlaces();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (model.checkinsLoading) {
-			showProgress();
-		}
+		updateProgress();
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -99,29 +97,20 @@ public class UdrunkActivity extends CommonActivity {
 	}
 
 	@UiThread
-	void showProgress() {
-		if(menu != null)
-		{
+	void updateProgress() {
+		if (menu != null) {
 			MenuItem refreshItem = menu.findItem(R.id.refresh_item_menu);
 
 			if (refreshItem != null) {
-				refreshItem.setActionView(R.layout.refresh_menuitem);
+				if (model.checkinsLoading)
+					refreshItem.setActionView(R.layout.refresh_menuitem);
+				else
+					refreshItem.setActionView(null);
+
 			}
 		}
 	}
-
-	@UiThread
-	void hideProgress() {
-		if(menu != null)
-		{
-			MenuItem refreshItem = menu.findItem(R.id.refresh_item_menu);
-
-			if (refreshItem != null) {
-				refreshItem.setActionView(null);
-			}
-		}
-	}
-
+	
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		public MyFragmentPagerAdapter(FragmentManager fm) {
@@ -151,11 +140,11 @@ public class UdrunkActivity extends CommonActivity {
 	@Override
 	public void update(Observable observable, Object data) {
 		if (data.equals(Model.CHECKINS_UPDATING)) {
-			showProgress();
+			updateProgress();
 		}
 		if (data.equals(Model.CHECKINS_UPDATED)) {
+			updateProgress();
 			timelineFragment.updateCheckins();
-			hideProgress();
 		}
 		if (data.equals(Model.PLACES_UPDATED)) {
 			placesFragment.updatePlaces();

@@ -14,6 +14,9 @@ public class Place implements Serializable {
 	
 	@DatabaseField
 	private String city;
+
+	@DatabaseField
+	private String geometry;
 	
 	public Integer getId() {
 		return id;
@@ -34,5 +37,28 @@ public class Place implements Serializable {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+	
+	public String getGeometry() {
+		return geometry;
+	}
+	public void setGeometry(String geometry) {
+		this.geometry = geometry;
+	}
+	
+	public double getLat()
+	{
+		String part = geometry.substring(7, geometry.length() - 1); // Get rid of parentheses.
+	    String[] coords = part.split(" ");
+	    double lat = Double.parseDouble(coords[1]);
+	    return lat;
+	}
+
+	public double getLong()
+	{
+		String part = geometry.substring(7, geometry.length() - 1); // Get rid of parentheses.
+		String[] coords = part.split(" ");
+		double lg = Double.parseDouble(coords[0]);
+		return lg;
 	}
 }

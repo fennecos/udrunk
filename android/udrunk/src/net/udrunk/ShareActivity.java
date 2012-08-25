@@ -7,6 +7,7 @@ import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 
@@ -25,6 +26,9 @@ public class ShareActivity extends CommonActivity {
 		ft.commit();
 
 		placesFragment.updatePlaces();
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 	}
 
 	@Override
@@ -58,5 +62,16 @@ public class ShareActivity extends CommonActivity {
 		model.insertCheckin(checkin);
 
 		finish();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 }
