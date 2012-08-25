@@ -54,7 +54,7 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 		mapOverlays.add(itemizedoverlay);
 		
 		mapView.getController().setCenter(point);
-		mapView.getController().setZoom(16);
+		mapView.getController().setZoom(17);
 	}
 
 	@Override
