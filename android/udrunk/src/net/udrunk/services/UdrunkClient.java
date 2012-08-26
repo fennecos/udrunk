@@ -1,10 +1,10 @@
 package net.udrunk.services;
 
-import net.udrunk.UdrunkApplication;
 import net.udrunk.domain.Checkin;
 import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllCheckinsDto;
 import net.udrunk.domain.dto.AllPlacesDto;
+import net.udrunk.model.Model;
 
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -13,7 +13,7 @@ import com.googlecode.androidannotations.annotations.rest.Get;
 import com.googlecode.androidannotations.annotations.rest.Post;
 import com.googlecode.androidannotations.annotations.rest.Rest;
 
-@Rest(UdrunkApplication.API_DOMAIN)
+@Rest(Model.API_DOMAIN)
 public interface UdrunkClient {
 
 	@Get("/api/v1/feed/?format=json")

@@ -29,10 +29,6 @@ public abstract class CommonActivity extends SherlockFragmentActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	public UdrunkApplication getUdrunkApplication() {
-		return (UdrunkApplication) getApplication();
-	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();

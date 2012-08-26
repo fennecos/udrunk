@@ -26,6 +26,9 @@ public class TimelineFragment extends SherlockFragment {
 	@Bean
 	public Model model;
 
+	@Bean
+	public CheckinAdapter adapter;
+
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
@@ -54,8 +57,7 @@ public class TimelineFragment extends SherlockFragment {
 		{
 			List<Checkin> checkins = model.getCheckins();
 			
-			CheckinAdapter adapter = new CheckinAdapter(getActivity(),
-					R.layout.list_feed_item, checkins);
+			adapter.updateItems(checkins);
 			listView.setAdapter(adapter);
 		}
 	}

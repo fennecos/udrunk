@@ -1,12 +1,12 @@
 package net.udrunk;
 
-import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 
 @EActivity(R.layout.map)
-public class LocationActivity extends SherlockMapActivity {
+public class LocationActivity extends SherlockActivity {
 
 	@AfterViews
 	public void afterViews() {
@@ -14,10 +14,6 @@ public class LocationActivity extends SherlockMapActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

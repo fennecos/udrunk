@@ -1,6 +1,8 @@
 package net.udrunk.model;
 
 import java.io.IOException;
+import java.net.ContentHandler;
+import java.net.URLStreamHandlerFactory;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
@@ -10,6 +12,7 @@ import net.udrunk.domain.Place;
 import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
+import net.udrunk.infra.JamendoCache;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.UdrunkClient;
 
@@ -33,6 +36,8 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.widget.Toast;
 
+import com.google.android.imageloader.BitmapContentHandler;
+import com.google.android.imageloader.ImageLoader;
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EBean;
@@ -60,6 +65,12 @@ public class Model extends Observable {
 	protected List<Place> places;
 
 	protected boolean connected;
+	
+	@AfterInject
+	protected void afterInjection()
+	{
+		imageLoader = createImageLoader(context);
+	}
 
 	public User getCurrentUser() {
 		User result = new User();
@@ -301,6 +312,42 @@ public class Model extends Observable {
 			retrieveCheckins();
 		}
 	}
+	
+	/* 
+	 * IMAGE LOADER
+	 * 
+	 */
+	
+	private static final int IMAGE_TASK_LIMIT = 3;
+	
+	public ImageLoader imageLoader;
+	
+	public static final String API_DOMAIN = "http://udrunk.valentinbourgoin.net";
+	
+	private static ImageLoader createImageLoader(Context context) {
+        // Install the file cache (if it is not already installed)
+        JamendoCache.install(context);
+        
+        // Just use the default URLStreamHandlerFactory because
+        // it supports all of the required URI schemes (http).
+        URLStreamHandlerFactory streamFactory = null;
+
+        // Load images using a BitmapContentHandler
+        // and cache the image data in the file cache.
+        ContentHandler bitmapHandler = JamendoCache.capture(new BitmapContentHandler(), null);
+
+        // For pre-fetching, use a "sink" content handler so that the
+        // the binary image data is captured by the cache without actually
+        // parsing and loading the image data into memory. After pre-fetching,
+        // the image data can be loaded quickly on-demand from the local cache.
+        ContentHandler prefetchHandler = JamendoCache.capture(JamendoCache.sink(), null);
+
+        // Perform callbacks on the main thread
+        Handler handler = null;
+        
+        return new ImageLoader(IMAGE_TASK_LIMIT, streamFactory, bitmapHandler, prefetchHandler,
+                ImageLoader.DEFAULT_CACHE_SIZE, handler);
+    }
 
 	@UiThread
 	public void showErrorToast(String message) {

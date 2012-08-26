@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.udrunk.R;
-import net.udrunk.UdrunkApplication;
 import net.udrunk.domain.Checkin;
+import net.udrunk.model.Model;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,17 +14,25 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.googlecode.androidannotations.annotations.Bean;
+import com.googlecode.androidannotations.annotations.EBean;
+import com.googlecode.androidannotations.annotations.RootContext;
+
+@EBean
 public class CheckinAdapter extends BaseAdapter {
 
 	private List<Checkin> items = new ArrayList<Checkin>();
-	private Context context;
+	
+	@RootContext
+	protected Context context;
 
-	public CheckinAdapter(Context context, int textViewResourceId,
-			List<Checkin> items) {
-		super();
-		this.context = context;
-		if (items != null)
-			this.items = items;
+	@Bean
+	protected Model model;
+	
+	public void updateItems(List<Checkin> items)
+	{
+		this.items = items;
+		notifyDataSetChanged();
 	}
 
 	public int getCount() {
@@ -58,7 +66,7 @@ public class CheckinAdapter extends BaseAdapter {
 			TextView dateText = (TextView) v.findViewById(R.id.txt_date);
 
 			nameText.setText(feed.getUser().getUsername());
-			((UdrunkApplication)context.getApplicationContext()).imageLoader.bind(avatarImg, feed.getUser()
+			model.imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
 			dateText.setText(feed.getAdded());
 
