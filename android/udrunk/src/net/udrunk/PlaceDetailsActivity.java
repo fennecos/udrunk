@@ -3,6 +3,7 @@ package net.udrunk;
 import java.util.List;
 
 import net.udrunk.domain.Place;
+import net.udrunk.infra.FixedMyLocationOverlay;
 import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 
@@ -29,7 +30,7 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 
 	@ViewById(R.id.mapview)
 	protected MapView mapView;
-	
+
 	@Extra("place_extra")
 	Place currentPlace;
 
@@ -40,21 +41,31 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		
+
+		GeoPoint point = getPoint(currentPlace.getLat(), currentPlace.getLong());
+
 		mapView.setBuiltInZoomControls(true);
-		
-		List<Overlay> mapOverlays = mapView.getOverlays();
-		Drawable drawable = this.getResources().getDrawable(R.drawable.drink_martini);
-		HelloItemizedOverlay itemizedoverlay = new HelloItemizedOverlay(drawable, this);
-		
-		GeoPoint point = getPoint(currentPlace.getLat(),currentPlace.getLong());
-		OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", currentPlace.getName());
-		
-		itemizedoverlay.addOverlay(overlayitem);
-		mapOverlays.add(itemizedoverlay);
-		
 		mapView.getController().setCenter(point);
 		mapView.getController().setZoom(17);
+
+		List<Overlay> mapOverlays = mapView.getOverlays();
+		Drawable drawable = this.getResources().getDrawable(
+				R.drawable.drink_martini);
+		HelloItemizedOverlay itemizedoverlay = new HelloItemizedOverlay(
+				drawable, this);
+
+		OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!",
+				currentPlace.getName());
+		itemizedoverlay.addOverlay(overlayitem);
+
+		FixedMyLocationOverlay myLocationOverlay = new FixedMyLocationOverlay(this,
+				mapView);
+		myLocationOverlay.enableMyLocation();
+
+		mapOverlays.add(itemizedoverlay);
+		mapOverlays.add(myLocationOverlay);
+
+		mapView.postInvalidate();
 	}
 
 	@Override
@@ -77,9 +88,8 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 	protected boolean isRouteDisplayed() {
 		return true;
 	}
-	
+
 	private GeoPoint getPoint(double lat, double lon) {
-	    return(new GeoPoint((int)(lat*1000000.0),
-	                          (int)(lon*1000000.0)));
-	  }
+		return (new GeoPoint((int) (lat * 1000000.0), (int) (lon * 1000000.0)));
+	}
 }
