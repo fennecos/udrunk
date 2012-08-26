@@ -19,6 +19,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.googlecode.androidannotations.api.BackgroundExecutor;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class CheckinService extends Service {
@@ -40,19 +41,29 @@ public class CheckinService extends Service {
 		return inMessenger.getBinder();
 	}
 
-	public void getCheckins() throws RestClientException {
+	public void getCheckins() {
 
-		AllCheckinsDto checkins = restClient.getFeed();
+		try {
+			AllCheckinsDto checkins = restClient.getFeed();
 
-		for (Checkin checkin : checkins.objects) {
-			try {
-				getDBHelper().getPlaceDao().createOrUpdate(checkin.getPlace());
-				getDBHelper().getUserDao().createOrUpdate(checkin.getUser());
-				getDBHelper().getCheckinDao().createOrUpdate(checkin);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			for (Checkin checkin : checkins.objects) {
+				try {
+					getDBHelper().getPlaceDao().createOrUpdate(
+							checkin.getPlace());
+					getDBHelper().getUserDao()
+							.createOrUpdate(checkin.getUser());
+					getDBHelper().getCheckinDao().createOrUpdate(checkin);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
+
+		} catch (RestClientException e) {
+			sendOutMessageUIThread(MSG_GET_CHECKINS_FAILED);
+			return;
 		}
+
+		sendOutMessage(MSG_GET_CHECKINS);
 	}
 
 	protected DataBaseHelper getDBHelper() {
@@ -73,7 +84,7 @@ public class CheckinService extends Service {
 	/** Keeps track of all current registered clients. */
 	ArrayList<Messenger> outMessengers = new ArrayList<Messenger>();
 
-	@SuppressLint("HandlerLeak") 
+	@SuppressLint("HandlerLeak")
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -82,43 +93,62 @@ public class CheckinService extends Service {
 			switch (msg.what) {
 			case MSG_REGISTER_CLIENT:
 				outMessengers.add(msg.replyTo);
-
 				break;
 			case MSG_UNREGISTER_CLIENT:
 				outMessengers.remove(msg.replyTo);
-
 				break;
 			case MSG_GET_CHECKINS:
-				try {
-					getCheckins();
-				} catch (RestClientException e) {
-					sendOutMessage(MSG_GET_CHECKINS_FAILED);
-					super.handleMessage(msg);
-					return;
-				}
-
-				sendOutMessage(MSG_GET_CHECKINS);
-
+				getCheckinsBackground();
 				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
-		
-		public void sendOutMessage(int messageId)
-		{
-			for (int i = outMessengers.size() - 1; i >= 0; i--) {
-				try {
-					outMessengers.get(i).send(
-							Message.obtain(null, messageId));
-				} catch (RemoteException e) {
-					// The client is dead. Remove it from the list;
-					// we are going through the list from back to front
-					// so this is safe to do inside the loop.
-					outMessengers.remove(i);
-				}
+
+	}
+
+	public void sendOutMessage(int messageId) {
+		for (int i = outMessengers.size() - 1; i >= 0; i--) {
+			try {
+				outMessengers.get(i).send(Message.obtain(null, messageId));
+			} catch (RemoteException e) {
+				// The client is dead. Remove it from the list;
+				// we are going through the list from back to front
+				// so this is safe to do inside the loop.
+				outMessengers.remove(i);
 			}
 		}
 	}
+	
+	
+	private Handler handler_ = new Handler();
+	
+    public void sendOutMessageUIThread(final int messageId) {
+        handler_.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sendOutMessage(messageId);
+                } catch (RuntimeException e) {
+                    Log.e("CheckinService_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+        }
+        );
+    }
+
+    public void getCheckinsBackground() {
+        BackgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    getCheckins();
+                } catch (RuntimeException e) {
+                    Log.e("CheckinService_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+        }
+        );
+    }
 
 }
