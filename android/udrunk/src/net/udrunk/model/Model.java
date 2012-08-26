@@ -52,7 +52,8 @@ public class Model extends Observable {
 
 	public static final int CHECKINS_UPDATING = 0;
 	public static final int CHECKINS_UPDATED = 1;
-	public static final int PLACES_UPDATED = 1;
+	public static final int PLACES_UPDATING = 2;
+	public static final int PLACES_UPDATED = 3;
 
 	@RootContext
 	protected Context context;
@@ -154,6 +155,7 @@ public class Model extends Observable {
 
 	public void retrievePlaces() {
 		if (!placesLoading) {
+			notifyObservers(PLACES_UPDATING);
 			retrievePlacesBackground();
 		}
 	}

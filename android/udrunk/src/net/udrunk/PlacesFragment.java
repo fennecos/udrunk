@@ -4,7 +4,9 @@ import net.udrunk.adapters.PlaceAdapater;
 import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.content.Intent;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
@@ -26,6 +28,9 @@ public class PlacesFragment extends SherlockFragment {
 	@Bean
 	public Model model;
 
+	@ViewById
+	public ProgressBar empty;
+
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
@@ -42,8 +47,7 @@ public class PlacesFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.map_item_menu:
-			Intent intent = new Intent(getActivity(),
-					LocationActivity_.class);
+			Intent intent = new Intent(getActivity(), LocationActivity_.class);
 			startActivity(intent);
 			return true;
 		}
@@ -56,6 +60,11 @@ public class PlacesFragment extends SherlockFragment {
 			PlaceAdapater adapter = new PlaceAdapater(getActivity(),
 					R.layout.list_place_item, model.getPlaces());
 			listView.setAdapter(adapter);
+
+			if (model.getPlaces() != null && model.getPlaces().size() > 0)
+				empty.setVisibility(View.GONE);
+			else
+				empty.setVisibility(View.VISIBLE);
 		}
 	}
 

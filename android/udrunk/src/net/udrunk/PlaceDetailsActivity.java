@@ -34,6 +34,8 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 	@Extra("place_extra")
 	Place currentPlace;
 
+	private FixedMyLocationOverlay myLocationOverlay;
+
 	@AfterViews
 	public void afterViews() {
 		txtName.setText(currentPlace.getName());
@@ -58,14 +60,21 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 				currentPlace.getName());
 		itemizedoverlay.addOverlay(overlayitem);
 
-		FixedMyLocationOverlay myLocationOverlay = new FixedMyLocationOverlay(this,
-				mapView);
+		myLocationOverlay = new FixedMyLocationOverlay(
+				this, mapView);
 		myLocationOverlay.enableMyLocation();
 
 		mapOverlays.add(itemizedoverlay);
 		mapOverlays.add(myLocationOverlay);
 
 		mapView.postInvalidate();
+		myLocationOverlay.runOnFirstFix(new Runnable() {
+			public void run() {
+				mapView.getController().animateTo(
+						myLocationOverlay.getMyLocation());
+			}
+		});
+
 	}
 
 	@Override

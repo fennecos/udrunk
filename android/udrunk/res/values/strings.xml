@@ -5,6 +5,7 @@
     <string name="app_name">Udrunk</string>
     <string name="share">Share</string>
     <string name="img_description_avatar">Udrunk</string>
+    <string name="message">Message</string>
 
     <string-array
         name="viewpager_titles">

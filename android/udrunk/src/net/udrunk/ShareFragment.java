@@ -24,7 +24,7 @@ public class ShareFragment extends SherlockFragment {
 		
 	}
 	
-	@Click(R.id.commitBtn)
+	@Click(R.id.btn_share)
 	public void onCommitBtnClicked()
 	{
 		((ShareActivity)getActivity()).sendCheckin(messageEdit.getText().toString(), levelSeekBar.getProgress());
