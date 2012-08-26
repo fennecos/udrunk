@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.udrunk.domain.Place;
 import net.udrunk.infra.FixedMyLocationOverlay;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
+import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Extra;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -43,6 +45,7 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setTitle(R.string.place_title);
 
 		GeoPoint point = getPoint(currentPlace.getLat(), currentPlace.getLong());
 
@@ -91,6 +94,14 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 
 		}
 		return (super.onOptionsItemSelected(item));
+	}
+	
+	@Click(R.id.btn_iamhere)
+	protected void iAmHereClicked()
+	{
+		Intent intent = new Intent(this, ShareActivity_.class);
+		intent.putExtra("place_extra", currentPlace);
+		startActivity(intent);
 	}
 
 	@Override

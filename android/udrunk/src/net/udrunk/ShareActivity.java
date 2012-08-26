@@ -10,25 +10,34 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.Extra;
 
 @EActivity(R.layout.share)
 public class ShareActivity extends CommonActivity {
 
 	private PlacesFragment placesFragment;
-	private Place currentPlace;
+
+	@Extra("place_extra")
+	protected Place currentPlace;
 
 	@AfterViews
 	public void afterViews() {
-		placesFragment = new PlacesFragment_();
+		if (currentPlace == null) {
+			placesFragment = new PlacesFragment_();
 
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.fragment_container, placesFragment);
-		ft.commit();
+			FragmentTransaction ft = getSupportFragmentManager()
+					.beginTransaction();
+			ft.add(R.id.fragment_container, placesFragment);
+			ft.commit();
 
-		placesFragment.updatePlaces();
-		
+			placesFragment.updatePlaces();
+		} else {
+			showShareFragment(currentPlace);
+		}
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setTitle(R.string.share_title);
 	}
 
 	@Override
@@ -46,7 +55,8 @@ public class ShareActivity extends CommonActivity {
 		// android.R.animator.fade_out);
 		ft.replace(R.id.fragment_container, new ShareFragment_());
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.addToBackStack(null);
+		if (placesFragment != null)
+			ft.addToBackStack(null);
 		ft.commit();
 
 	}
@@ -63,7 +73,7 @@ public class ShareActivity extends CommonActivity {
 
 		finish();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

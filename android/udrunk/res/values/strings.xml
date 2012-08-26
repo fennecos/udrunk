@@ -3,7 +3,10 @@
 
     <string name="hello">Hello World, UdrunkActivity!</string>
     <string name="app_name">Udrunk</string>
+    <string name="share_title">Share</string>
     <string name="share">Share</string>
+    <string name="iamhere">I\'m here!</string>
+    <string name="place_title">Place Details</string>
     <string name="img_description_avatar">Udrunk</string>
     <string name="message">Message</string>
 
