@@ -66,10 +66,9 @@ public class Model extends Observable {
 	protected List<Place> places;
 
 	protected boolean connected;
-	
+
 	@AfterInject
-	protected void afterInjection()
-	{
+	protected void afterInjection() {
 		imageLoader = createImageLoader(context);
 	}
 
@@ -163,10 +162,14 @@ public class Model extends Observable {
 	@Background
 	protected void retrievePlacesBackground() {
 		placesLoading = true;
-		AllPlacesDto placesDto = restClient.getPlaces();
-
-		setPlaces(placesDto.objects);
-		onPlacesRetieved();
+		try {
+			AllPlacesDto placesDto = restClient.getPlaces();
+			setPlaces(placesDto.objects);
+		} catch (RestClientException e) {
+			showErrorToast("Places : " + e.getMessage());
+		} finally {
+			onPlacesRetieved();
+		}
 	}
 
 	@UiThread
@@ -184,7 +187,7 @@ public class Model extends Observable {
 	private Messenger checkinServiceMessenger = null;
 
 	private Messenger inMessenger = new Messenger(new IncomingHandler());
-	
+
 	private boolean checkinUpdateRequested;
 
 	protected boolean mIsBound = false;
@@ -283,9 +286,7 @@ public class Model extends Observable {
 					e.printStackTrace();
 				}
 			}
-		}
-		else
-		{
+		} else {
 			checkinUpdateRequested = true;
 		}
 	}
@@ -296,8 +297,7 @@ public class Model extends Observable {
 	}
 
 	protected void onCheckinsServiceConnected() {
-		if(checkinUpdateRequested)
-		{
+		if (checkinUpdateRequested) {
 			checkinUpdateRequested = false;
 			retrieveCheckins();
 		}
@@ -314,42 +314,43 @@ public class Model extends Observable {
 			retrieveCheckins();
 		}
 	}
-	
-	/* 
+
+	/*
 	 * IMAGE LOADER
-	 * 
 	 */
-	
+
 	private static final int IMAGE_TASK_LIMIT = 3;
-	
+
 	public ImageLoader imageLoader;
-	
+
 	public static final String API_DOMAIN = "http://udrunk.valentinbourgoin.net";
-	
+
 	private static ImageLoader createImageLoader(Context context) {
-        // Install the file cache (if it is not already installed)
-        JamendoCache.install(context);
-        
-        // Just use the default URLStreamHandlerFactory because
-        // it supports all of the required URI schemes (http).
-        URLStreamHandlerFactory streamFactory = null;
+		// Install the file cache (if it is not already installed)
+		JamendoCache.install(context);
 
-        // Load images using a BitmapContentHandler
-        // and cache the image data in the file cache.
-        ContentHandler bitmapHandler = JamendoCache.capture(new BitmapContentHandler(), null);
+		// Just use the default URLStreamHandlerFactory because
+		// it supports all of the required URI schemes (http).
+		URLStreamHandlerFactory streamFactory = null;
 
-        // For pre-fetching, use a "sink" content handler so that the
-        // the binary image data is captured by the cache without actually
-        // parsing and loading the image data into memory. After pre-fetching,
-        // the image data can be loaded quickly on-demand from the local cache.
-        ContentHandler prefetchHandler = JamendoCache.capture(JamendoCache.sink(), null);
+		// Load images using a BitmapContentHandler
+		// and cache the image data in the file cache.
+		ContentHandler bitmapHandler = JamendoCache.capture(
+				new BitmapContentHandler(), null);
 
-        // Perform callbacks on the main thread
-        Handler handler = null;
-        
-        return new ImageLoader(IMAGE_TASK_LIMIT, streamFactory, bitmapHandler, prefetchHandler,
-                ImageLoader.DEFAULT_CACHE_SIZE, handler);
-    }
+		// For pre-fetching, use a "sink" content handler so that the
+		// the binary image data is captured by the cache without actually
+		// parsing and loading the image data into memory. After pre-fetching,
+		// the image data can be loaded quickly on-demand from the local cache.
+		ContentHandler prefetchHandler = JamendoCache.capture(
+				JamendoCache.sink(), null);
+
+		// Perform callbacks on the main thread
+		Handler handler = null;
+
+		return new ImageLoader(IMAGE_TASK_LIMIT, streamFactory, bitmapHandler,
+				prefetchHandler, ImageLoader.DEFAULT_CACHE_SIZE, handler);
+	}
 
 	@UiThread
 	public void showErrorToast(String message) {

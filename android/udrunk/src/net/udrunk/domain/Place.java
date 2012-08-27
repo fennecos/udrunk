@@ -2,6 +2,9 @@ package net.udrunk.domain;
 
 import java.io.Serializable;
 
+import net.udrunk.infra.PointPersister;
+
+
 import com.j256.ormlite.field.DatabaseField;
 
 @SuppressWarnings("serial")
@@ -15,8 +18,8 @@ public class Place implements Serializable {
 	@DatabaseField
 	private String city;
 
-	@DatabaseField
-	private String geometry;
+	@DatabaseField(persisterClass = PointPersister.class)
+	private Point geometry;
 	
 	public Integer getId() {
 		return id;
@@ -39,26 +42,10 @@ public class Place implements Serializable {
 		this.city = city;
 	}
 	
-	public String getGeometry() {
+	public Point getGeometry() {
 		return geometry;
 	}
-	public void setGeometry(String geometry) {
+	public void setGeometry(Point geometry) {
 		this.geometry = geometry;
-	}
-	
-	public double getLat()
-	{
-		String part = geometry.substring(7, geometry.length() - 1); // Get rid of parentheses.
-	    String[] coords = part.split(" ");
-	    double lat = Double.parseDouble(coords[1]);
-	    return lat;
-	}
-
-	public double getLong()
-	{
-		String part = geometry.substring(7, geometry.length() - 1); // Get rid of parentheses.
-		String[] coords = part.split(" ");
-		double lg = Double.parseDouble(coords[0]);
-		return lg;
 	}
 }

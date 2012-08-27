@@ -2,26 +2,25 @@ package net.udrunk.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 
-
 public class Checkin {
 	@DatabaseField(id = true)
 	private Integer id;
-	
+
 	@DatabaseField
-	private String added;
-	
+	private long added;
+
 	@DatabaseField
 	private Integer level;
-	
+
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Place place;
-	
+
 	@DatabaseField
 	private String status;
-	
+
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User user;
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -50,11 +49,11 @@ public class Checkin {
 		this.status = status;
 	}
 
-	public String getAdded() {
+	public long getAdded() {
 		return added;
 	}
 
-	public void setAdded(String added) {
+	public void setAdded(long added) {
 		this.added = added;
 	}
 

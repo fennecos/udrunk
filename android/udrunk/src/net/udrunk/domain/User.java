@@ -1,5 +1,6 @@
 package net.udrunk.domain;
 
+
 import com.j256.ormlite.field.DatabaseField;
 
 
@@ -24,7 +25,7 @@ public class User {
 	private String avatar;
 	
 	@DatabaseField
-	private String date_joined;
+	private long date_joined;
 	
 	public Integer getId() {
 		return id;
@@ -62,10 +63,10 @@ public class User {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-	public String getDate_joined() {
+	public long getDate_joined() {
 		return date_joined;
 	}
-	public void setDate_joined(String date_joined) {
+	public void setDate_joined(long date_joined) {
 		this.date_joined = date_joined;
 	}
 }

@@ -68,7 +68,7 @@ public class CheckinAdapter extends BaseAdapter {
 			nameText.setText(feed.getUser().getUsername());
 			model.imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
-			dateText.setText(feed.getAdded());
+			dateText.setText(feed.getAdded() + "");
 
 			if (feed.getStatus() != null && feed.getStatus() != "") {
 				statusText.setText(feed.getStatus());

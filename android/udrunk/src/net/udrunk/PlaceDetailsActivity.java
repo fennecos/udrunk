@@ -47,7 +47,7 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setTitle(R.string.place_title);
 
-		GeoPoint point = getPoint(currentPlace.getLat(), currentPlace.getLong());
+		GeoPoint point = getPoint(currentPlace.getGeometry().y, currentPlace.getGeometry().x);
 
 		mapView.setBuiltInZoomControls(true);
 		mapView.getController().setCenter(point);
