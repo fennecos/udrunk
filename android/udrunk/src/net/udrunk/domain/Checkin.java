@@ -1,5 +1,7 @@
 package net.udrunk.domain;
 
+import java.util.Date;
+
 import com.j256.ormlite.field.DatabaseField;
 
 public class Checkin {
@@ -55,6 +57,10 @@ public class Checkin {
 
 	public void setAdded(long added) {
 		this.added = added;
+	}
+
+	public Date getAddedDate() {
+		return new Date(added);
 	}
 
 	public Place getPlace() {

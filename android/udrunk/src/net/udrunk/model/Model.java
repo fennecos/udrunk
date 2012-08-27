@@ -89,7 +89,7 @@ public class Model extends Observable {
 
 	public List<Checkin> getCheckins() {
 		try {
-			return getDBHelper().getCheckinDao().queryForAll();
+			return getDBHelper().getCheckinDao().queryBuilder().orderBy("added", false).query();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

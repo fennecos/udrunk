@@ -1,5 +1,6 @@
 package net.udrunk.adapters;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class CheckinAdapter extends BaseAdapter {
 			nameText.setText(feed.getUser().getUsername());
 			model.imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
-			dateText.setText(feed.getAdded() + "");
+			dateText.setText(DateFormat.getDateInstance().format(feed.getAddedDate()));
 
 			if (feed.getStatus() != null && feed.getStatus() != "") {
 				statusText.setText(feed.getStatus());
