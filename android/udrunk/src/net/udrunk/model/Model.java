@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLStreamHandlerFactory;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
 import net.udrunk.domain.Checkin;
 import net.udrunk.domain.Place;
+import net.udrunk.domain.Point;
 import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.infra.JamendoCache;
+import net.udrunk.infra.PointSerializer;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.UdrunkClient;
 
@@ -21,6 +24,9 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,10 +40,13 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.imageloader.BitmapContentHandler;
 import com.google.android.imageloader.ImageLoader;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EBean;
@@ -66,10 +75,19 @@ public class Model extends Observable {
 	protected List<Place> places;
 
 	protected boolean connected;
+	
+	Gson gson;
 
 	@AfterInject
 	protected void afterInjection() {
 		imageLoader = createImageLoader(context);
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+		
+		GsonBuilder gsonb = new GsonBuilder();
+		gsonb.registerTypeHierarchyAdapter(Point.class, new PointSerializer());
+		gson = gsonb.create();
+		messageConverters.add(new GsonHttpMessageConverter(gson));
+		restClient.getRestTemplate().setMessageConverters(messageConverters );
 	}
 
 	public User getCurrentUser() {
@@ -306,7 +324,12 @@ public class Model extends Observable {
 	@Background
 	public void insertCheckin(Checkin checkin) {
 		try {
+			Log.d("Model", gson.toJson(checkin));
 			restClient.insertCheckin(checkin);
+		} catch (HttpServerErrorException e) {
+			e.printStackTrace();
+			Log.w("Model", e.getResponseBodyAsString());
+			showErrorToast(e.getMessage());
 		} catch (RestClientException e) {
 			e.printStackTrace();
 			showErrorToast(e.getMessage());
