@@ -5,9 +5,7 @@ import java.net.ContentHandler;
 import java.net.URLStreamHandlerFactory;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 
 import net.udrunk.domain.Checkin;
@@ -18,6 +16,7 @@ import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.infra.JamendoCache;
 import net.udrunk.infra.PointSerializer;
+import net.udrunk.infra.resttemplate.UdrunkJsonHttpMessageConverter;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.UdrunkClient;
 
@@ -27,7 +26,6 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -89,7 +87,7 @@ public class Model extends Observable {
 		GsonBuilder gsonb = new GsonBuilder();
 		gsonb.registerTypeHierarchyAdapter(Point.class, new PointSerializer());
 		gson = gsonb.create();
-		messageConverters.add(new GsonHttpMessageConverter(gson));
+		messageConverters.add(new UdrunkJsonHttpMessageConverter(gson));
 		restClient.getRestTemplate().setMessageConverters(messageConverters );
 	}
 
@@ -326,15 +324,8 @@ public class Model extends Observable {
 
 	@Background
 	public void insertCheckin(Checkin checkin) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("level", 21);
-		map.put("user", "/api/v1/user/" + checkin.getUser().getId() + "/");
-		map.put("place", "/api/v1/place/" + checkin.getUser().getId() + "/");
-		map.put("status", checkin.getStatus());
-		Log.d("Model", gson.toJson(map));
 		try {
-			Log.d("Model", gson.toJson(checkin));
-			restClient.insertCheckin(map);
+			restClient.insertCheckin(checkin);
 		} catch (HttpServerErrorException e) {
 			e.printStackTrace();
 			Log.w("Model", e.getResponseBodyAsString());
