@@ -70,9 +70,17 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setViewPager(viewPager);
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
+		titleIndicator.setOnPageChangeListener(onPageChangeListener);
 
 		model.retrieveCheckins();
-		model.retrievePlaces();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		updateProgress();
+		timelineFragment.updateCheckins();
+		placesFragment.updatePlaces();
 	}
 
 	@Override
@@ -128,7 +136,7 @@ public class UdrunkActivity extends CommonActivity {
 
 			return fragmentList.size();
 		}
-
+		
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Resources res = UdrunkActivity.this.getResources();
@@ -136,6 +144,28 @@ public class UdrunkActivity extends CommonActivity {
 			return titles[position];
 		}
 	}
+	
+	protected ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+
+		@Override
+		public void onPageSelected(int pageSelected) {
+			if(pageSelected == 1)
+			{
+				if(model.getPlaces() == null)
+				{
+					model.retrievePlaces();
+				}
+			}
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int arg0) {
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		}
+	};
 
 	@Override
 	public void update(Observable observable, Object data) {
@@ -145,6 +175,9 @@ public class UdrunkActivity extends CommonActivity {
 		if (data.equals(Model.CHECKINS_UPDATED)) {
 			updateProgress();
 			timelineFragment.updateCheckins();
+		}
+		if (data.equals(Model.PLACES_UPDATING)) {
+			placesFragment.updateProgress();
 		}
 		if (data.equals(Model.PLACES_UPDATED)) {
 			placesFragment.updatePlaces();

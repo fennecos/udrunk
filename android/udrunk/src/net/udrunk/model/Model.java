@@ -173,6 +173,7 @@ public class Model extends Observable {
 
 	public void retrievePlaces() {
 		if (!placesLoading) {
+			placesLoading = true;
 			notifyObservers(PLACES_UPDATING);
 			retrievePlacesBackground();
 		}
@@ -180,7 +181,6 @@ public class Model extends Observable {
 
 	@Background
 	protected void retrievePlacesBackground() {
-		placesLoading = true;
 		try {
 			AllPlacesDto placesDto = restClient.getPlaces();
 			setPlaces(placesDto.objects);
@@ -194,7 +194,6 @@ public class Model extends Observable {
 	@UiThread
 	protected void onPlacesRetieved() {
 		placesLoading = false;
-		setChanged();
 		notifyObservers(PLACES_UPDATED);
 	}
 
@@ -290,11 +289,10 @@ public class Model extends Observable {
 	@UiThread
 	public void retrieveCheckins() {
 		if (connected) {
-			setChanged();
-			notifyObservers(CHECKINS_UPDATING);
-
 			if (!checkinsLoading) {
 				checkinsLoading = true;
+				notifyObservers(CHECKINS_UPDATING);
+				
 				Toast.makeText(context, "Retieving Checkins",
 						Toast.LENGTH_SHORT).show();
 				Message msg = Message.obtain(null,
@@ -311,7 +309,6 @@ public class Model extends Observable {
 	}
 
 	protected void onCheckinsRetieved() {
-		setChanged();
 		notifyObservers(CHECKINS_UPDATED);
 	}
 
@@ -382,6 +379,12 @@ public class Model extends Observable {
 	@UiThread
 	public void showErrorToast(String message) {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+	}
+	
+	@Override
+	public void notifyObservers(Object data) {
+		setChanged();
+		super.notifyObservers(data);
 	}
 
 }

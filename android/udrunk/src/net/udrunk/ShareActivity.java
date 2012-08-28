@@ -31,6 +31,11 @@ public class ShareActivity extends CommonActivity {
 			ft.commit();
 
 			placesFragment.updatePlaces();
+			
+			if(model.getPlaces() == null)
+			{
+				model.retrievePlaces();
+			}
 		} else {
 			showShareFragment(currentPlace);
 		}
@@ -38,10 +43,14 @@ public class ShareActivity extends CommonActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setTitle(R.string.share_title);
+		
 	}
 
 	@Override
 	public void update(Observable observable, Object data) {
+		if (data.equals(Model.PLACES_UPDATING)) {
+			placesFragment.updateProgress();
+		}
 		if (data.equals(Model.PLACES_UPDATED)) {
 			placesFragment.updatePlaces();
 		}

@@ -5,6 +5,7 @@ import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.content.Intent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -14,6 +15,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
+import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.ItemClick;
 import com.googlecode.androidannotations.annotations.UiThread;
@@ -30,6 +32,9 @@ public class PlacesFragment extends SherlockFragment {
 
 	@ViewById
 	public ProgressBar empty;
+
+	@ViewById(R.id.bnt_getplaces)
+	public Button getPlacesButton;
 
 	@AfterViews
 	public void afterViews() {
@@ -61,10 +66,7 @@ public class PlacesFragment extends SherlockFragment {
 					R.layout.list_place_item, model.getPlaces());
 			listView.setAdapter(adapter);
 
-			if (model.getPlaces() != null && model.getPlaces().size() > 0)
-				empty.setVisibility(View.GONE);
-			else
-				empty.setVisibility(View.VISIBLE);
+			updateProgress();
 		}
 	}
 
@@ -77,6 +79,31 @@ public class PlacesFragment extends SherlockFragment {
 					PlaceDetailsActivity_.class);
 			intent.putExtra("place_extra", place);
 			startActivity(intent);
+		}
+	}
+	
+	@Click(R.id.bnt_getplaces)
+	protected void retryClicked()
+	{
+		model.getPlaces();
+	}
+	
+	public void updateProgress()
+	{
+		if(model.placesLoading)
+		{
+			getPlacesButton.setVisibility(View.GONE);
+			empty.setVisibility(View.VISIBLE);
+		}
+		else if(model.getPlaces() == null || model.getPlaces().size() == 0)
+		{
+			getPlacesButton.setVisibility(View.VISIBLE);
+			empty.setVisibility(View.GONE);
+		}
+		else
+		{
+			getPlacesButton.setVisibility(View.GONE);
+			empty.setVisibility(View.GONE);
 		}
 	}
 }
