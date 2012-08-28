@@ -22,6 +22,9 @@ public interface UdrunkClient {
 	AllPlacesDto getPlaces(double lat, double lng) throws RestClientException;
 	
 	
+	@Post("/api/v1/login/?format=json&login={login}&pass={pass}")
+	Object login(String login, String pass) throws RestClientException;
+	
 	@Post("/api/v1/user/?username=valentin&api_key=valentin")
 	User insertUser(User user) throws RestClientException;
 

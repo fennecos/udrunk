@@ -13,6 +13,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.Click;
@@ -39,6 +40,12 @@ public class PlacesFragment extends SherlockFragment {
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
+		updatePlaces();
+	}
+	
+	@AfterInject
+	protected void afterInjection()
+	{
 		updatePlaces();
 	}
 
