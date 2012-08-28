@@ -84,7 +84,7 @@ public class PlacesFragment extends SherlockFragment {
 
 	@Click(R.id.bnt_getplaces)
 	protected void retryClicked() {
-		model.getPlaces();
+		model.retrievePlaces();
 	}
 
 	public void updateProgress() {
