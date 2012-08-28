@@ -5,7 +5,9 @@ import java.net.ContentHandler;
 import java.net.URLStreamHandlerFactory;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import net.udrunk.domain.Checkin;
@@ -26,6 +28,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -323,10 +326,20 @@ public class Model extends Observable {
 
 	@Background
 	public void insertCheckin(Checkin checkin) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("level", 21);
+		map.put("user", "/api/v1/user/" + checkin.getUser().getId() + "/");
+		map.put("place", "/api/v1/place/" + checkin.getUser().getId() + "/");
+		map.put("status", checkin.getStatus());
+		Log.d("Model", gson.toJson(map));
 		try {
 			Log.d("Model", gson.toJson(checkin));
-			restClient.insertCheckin(checkin);
+			restClient.insertCheckin(map);
 		} catch (HttpServerErrorException e) {
+			e.printStackTrace();
+			Log.w("Model", e.getResponseBodyAsString());
+			showErrorToast(e.getMessage());
+		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
 			Log.w("Model", e.getResponseBodyAsString());
 			showErrorToast(e.getMessage());

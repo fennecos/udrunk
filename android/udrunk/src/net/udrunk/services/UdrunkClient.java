@@ -1,6 +1,5 @@
 package net.udrunk.services;
 
-import net.udrunk.domain.Checkin;
 import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllCheckinsDto;
 import net.udrunk.domain.dto.AllPlacesDto;
@@ -27,7 +26,7 @@ public interface UdrunkClient {
 	User insertUser(User user) throws RestClientException;
 
 	@Post("/api/v1/checkin/?username=valentin&api_key=valentin")
-	Checkin insertCheckin(Checkin Checkin) throws RestClientException;
+	Object insertCheckin(Object checkin) throws RestClientException;
 	
 	RestTemplate getRestTemplate();
 	void setRestTemplate(RestTemplate restTemplate);
