@@ -81,29 +81,25 @@ public class PlacesFragment extends SherlockFragment {
 			startActivity(intent);
 		}
 	}
-	
+
 	@Click(R.id.bnt_getplaces)
-	protected void retryClicked()
-	{
+	protected void retryClicked() {
 		model.getPlaces();
 	}
-	
-	public void updateProgress()
-	{
-		if(model.placesLoading)
-		{
-			getPlacesButton.setVisibility(View.GONE);
-			empty.setVisibility(View.VISIBLE);
-		}
-		else if(model.getPlaces() == null || model.getPlaces().size() == 0)
-		{
-			getPlacesButton.setVisibility(View.VISIBLE);
-			empty.setVisibility(View.GONE);
-		}
-		else
-		{
-			getPlacesButton.setVisibility(View.GONE);
-			empty.setVisibility(View.GONE);
+
+	public void updateProgress() {
+		if (model != null) {
+			if (model.placesLoading) {
+				getPlacesButton.setVisibility(View.GONE);
+				empty.setVisibility(View.VISIBLE);
+			} else if (model.getPlaces() == null
+					|| model.getPlaces().size() == 0) {
+				getPlacesButton.setVisibility(View.VISIBLE);
+				empty.setVisibility(View.GONE);
+			} else {
+				getPlacesButton.setVisibility(View.GONE);
+				empty.setVisibility(View.GONE);
+			}
 		}
 	}
 }

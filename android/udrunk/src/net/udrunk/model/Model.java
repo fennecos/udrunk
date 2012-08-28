@@ -15,6 +15,8 @@ import net.udrunk.domain.User;
 import net.udrunk.domain.dto.AllPlacesDto;
 import net.udrunk.infra.DataBaseHelper;
 import net.udrunk.infra.JamendoCache;
+import net.udrunk.infra.MyLocation;
+import net.udrunk.infra.MyLocation.LocationResult;
 import net.udrunk.infra.PointSerializer;
 import net.udrunk.infra.resttemplate.UdrunkJsonHttpMessageConverter;
 import net.udrunk.services.CheckinService;
@@ -36,6 +38,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -77,7 +80,7 @@ public class Model extends Observable {
 
 	protected boolean connected;
 	
-	Gson gson;
+	protected MyLocation myLocation = new MyLocation();
 
 	@AfterInject
 	protected void afterInjection() {
@@ -86,7 +89,7 @@ public class Model extends Observable {
 		
 		GsonBuilder gsonb = new GsonBuilder();
 		gsonb.registerTypeHierarchyAdapter(Point.class, new PointSerializer());
-		gson = gsonb.create();
+		Gson gson = gsonb.create();
 		messageConverters.add(new UdrunkJsonHttpMessageConverter(gson));
 		restClient.getRestTemplate().setMessageConverters(messageConverters );
 	}
@@ -175,14 +178,23 @@ public class Model extends Observable {
 		if (!placesLoading) {
 			placesLoading = true;
 			notifyObservers(PLACES_UPDATING);
-			retrievePlacesBackground();
+			
+			myLocation.getLocation(context, locationResult);
 		}
 	}
+	
+	LocationResult locationResult = new LocationResult() {
+		
+		@Override
+		public void gotLocation(Location location) {
+			retrievePlacesBackground(location.getLatitude(), location.getLongitude());
+		}
+	};
 
 	@Background
-	protected void retrievePlacesBackground() {
+	protected void retrievePlacesBackground(double lat, double lg) {
 		try {
-			AllPlacesDto placesDto = restClient.getPlaces();
+			AllPlacesDto placesDto = restClient.getPlaces(lat, lg);
 			setPlaces(placesDto.objects);
 		} catch (RestClientException e) {
 			showErrorToast("Places : " + e.getMessage());

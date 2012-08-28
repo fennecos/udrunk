@@ -103,6 +103,12 @@ public class PlaceDetailsActivity extends SherlockMapActivity {
 		intent.putExtra("place_extra", currentPlace);
 		startActivity(intent);
 	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		myLocationOverlay.disableMyLocation();
+	}
 
 	@Override
 	protected boolean isRouteDisplayed() {

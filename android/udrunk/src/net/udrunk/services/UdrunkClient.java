@@ -18,8 +18,8 @@ public interface UdrunkClient {
 	@Get("/api/v1/feed/?format=json&username=valentin&api_key=valentin")
 	AllCheckinsDto getFeed() throws RestClientException;
 
-	@Get("/api/v1/place/?format=json&username=valentin&api_key=valentin")
-	AllPlacesDto getPlaces() throws RestClientException;
+	@Get("/api/v1/place/?format=json&username=valentin&api_key=valentin&near={lng},{lat}")
+	AllPlacesDto getPlaces(double lat, double lng) throws RestClientException;
 	
 	
 	@Post("/api/v1/user/?username=valentin&api_key=valentin")
