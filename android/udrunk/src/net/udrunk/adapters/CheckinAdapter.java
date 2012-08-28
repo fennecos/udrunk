@@ -32,6 +32,8 @@ public class CheckinAdapter extends BaseAdapter {
 	
 	public void updateItems(List<Checkin> items)
 	{
+		if(items == null)
+			items = new ArrayList<Checkin>();
 		this.items = items;
 		notifyDataSetChanged();
 	}

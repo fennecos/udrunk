@@ -81,6 +81,8 @@ public class Model extends Observable {
 	protected boolean connected;
 	
 	protected MyLocation myLocation = new MyLocation();
+	
+	public Location currentLocation;
 
 	@AfterInject
 	protected void afterInjection() {
@@ -187,6 +189,7 @@ public class Model extends Observable {
 		
 		@Override
 		public void gotLocation(Location location) {
+			currentLocation = location;
 			retrievePlacesBackground(location.getLatitude(), location.getLongitude());
 		}
 	};

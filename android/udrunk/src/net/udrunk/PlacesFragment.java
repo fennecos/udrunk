@@ -30,6 +30,9 @@ public class PlacesFragment extends SherlockFragment {
 
 	@Bean
 	public Model model;
+	
+	@Bean
+	public PlaceAdapater adapter;
 
 	@ViewById
 	public ProgressBar empty;
@@ -69,8 +72,7 @@ public class PlacesFragment extends SherlockFragment {
 	@UiThread
 	void updatePlaces() {
 		if (model != null) {
-			PlaceAdapater adapter = new PlaceAdapater(getActivity(),
-					R.layout.list_place_item, model.getPlaces());
+			adapter.updateItems(model.getPlaces());
 			listView.setAdapter(adapter);
 
 			updateProgress();
