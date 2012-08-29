@@ -194,10 +194,17 @@ public class Model extends Observable {
 		try {
 			Log.d("Login", login + " " + pass);
 			Login currentLogin = restClient.login(login, pass).getLogin();
-			SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
-			Gson gson = new Gson();
-		    settings.edit().putString("login", gson.toJson(currentLogin)).commit();
-		    onLoginSucess();
+			if(currentLogin != null)
+			{
+				SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
+				Gson gson = new Gson();
+			    settings.edit().putString("login", gson.toJson(currentLogin)).commit();
+			    onLoginSucess();
+			}
+			else
+			{
+				onLoginFailed();
+			}
 		} catch (RestClientException e) {
 			e.printStackTrace();
 			showErrorToast("Login : " + e.getMessage());

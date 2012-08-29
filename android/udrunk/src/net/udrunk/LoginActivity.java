@@ -7,6 +7,7 @@ import net.udrunk.model.Model;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.Click;
@@ -44,6 +45,9 @@ public class LoginActivity extends CommonActivity {
 			Intent intent = new Intent(this, UdrunkActivity_.class);
 			startActivity(intent);
 			finish();
+		}
+		if (data.equals(Model.LOGIN_FAILED)) {
+			Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
 		}
 	}
 }
