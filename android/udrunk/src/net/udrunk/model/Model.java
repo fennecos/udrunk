@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Observable;
 
 import net.udrunk.domain.Checkin;
+import net.udrunk.domain.Login;
 import net.udrunk.domain.Place;
 import net.udrunk.domain.Point;
 import net.udrunk.domain.User;
@@ -38,6 +39,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Handler;
 import android.os.IBinder;
@@ -63,10 +65,14 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 @EBean(scope = Scope.Singleton)
 public class Model extends Observable {
 
-	public static final int CHECKINS_UPDATING = 0;
-	public static final int CHECKINS_UPDATED = 1;
-	public static final int PLACES_UPDATING = 2;
-	public static final int PLACES_UPDATED = 3;
+	public static final int LOGIN_SUCCESS = 0;
+	public static final int LOGIN_FAILED = 1;
+	
+	public static final int CHECKINS_UPDATING = 10;
+	public static final int CHECKINS_UPDATED = 11;
+	
+	public static final int PLACES_UPDATING = 20;
+	public static final int PLACES_UPDATED = 21;
 
 	@RootContext
 	protected Context context;
@@ -84,6 +90,7 @@ public class Model extends Observable {
 	
 	public Location currentLocation;
 
+
 	@AfterInject
 	protected void afterInjection() {
 		imageLoader = createImageLoader(context);
@@ -96,10 +103,17 @@ public class Model extends Observable {
 		restClient.getRestTemplate().setMessageConverters(messageConverters );
 	}
 
+	public Login getCurrentLogin() {
+		SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
+		String loginStr = settings.getString("login", null);
+		Gson gson = new Gson();
+		Login result = gson.fromJson(loginStr, Login.class);
+		return result;
+	}
+	
 	public User getCurrentUser() {
 		User result = new User();
-		result.setId(1);
-		result.setUsername("valentin");
+		result.setId(getCurrentLogin().getId());
 		return result;
 	}
 
@@ -133,7 +147,6 @@ public class Model extends Observable {
 
 	@AfterInject
 	public void doSomethingAfterInjection() {
-		initAuth();
 		doBindService();
 	}
 
@@ -172,6 +185,42 @@ public class Model extends Observable {
 
 	/**
 	 * 
+	 * LOGIN SERVICE
+	 * 
+	 */
+	
+	@Background
+	public void login(String login, String pass) {
+		try {
+			Log.d("Login", login + " " + pass);
+			Login currentLogin = restClient.login(login, pass).getLogin();
+			SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
+			Gson gson = new Gson();
+		    settings.edit().putString("login", gson.toJson(currentLogin)).commit();
+		    onLoginSucess();
+		} catch (RestClientException e) {
+			e.printStackTrace();
+			showErrorToast("Login : " + e.getMessage());
+			onLoginFailed();
+		}
+	}
+	
+	@UiThread
+	protected void onLoginSucess()
+	{
+		initAuth();
+		notifyObservers(LOGIN_SUCCESS);
+	}
+	
+	@UiThread
+	protected void onLoginFailed()
+	{
+		notifyObservers(LOGIN_FAILED);
+	}
+	
+	
+	/**
+	 * 
 	 * PLACE SERVICE
 	 * 
 	 */
@@ -197,7 +246,7 @@ public class Model extends Observable {
 	@Background
 	protected void retrievePlacesBackground(double lat, double lg) {
 		try {
-			AllPlacesDto placesDto = restClient.getPlaces(lat, lg);
+			AllPlacesDto placesDto = restClient.getPlaces(lat, lg, getCurrentLogin().getUsername(), getCurrentLogin().getApi_key());
 			setPlaces(placesDto.objects);
 		} catch (RestClientException e) {
 			showErrorToast("Places : " + e.getMessage());
@@ -337,7 +386,7 @@ public class Model extends Observable {
 	@Background
 	public void insertCheckin(Checkin checkin) {
 		try {
-			restClient.insertCheckin(checkin);
+			restClient.insertCheckin(checkin, getCurrentLogin().getUsername(), getCurrentLogin().getApi_key());
 		} catch (HttpServerErrorException e) {
 			e.printStackTrace();
 			Log.w("Model", e.getResponseBodyAsString());

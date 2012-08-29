@@ -1,5 +1,9 @@
 package net.udrunk;
 
+import java.util.Observable;
+
+import net.udrunk.model.Model;
+
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,13 +28,22 @@ public class LoginActivity extends CommonActivity {
 	@Click(R.id.btn_login)
 	protected void onLoginClicked()
 	{
-		Intent intent = new Intent(this, UdrunkActivity_.class);
-		startActivity(intent);
-		finish();
+		model.login(loginEdit.getText().toString(), passEdit.getText().toString());
 	}
 	
 	@AfterInject
 	protected void afterInjection()
 	{
+	}
+	
+	@Override
+	public void update(Observable observable, Object data) {
+		super.update(observable, data);
+		
+		if (data.equals(Model.LOGIN_SUCCESS)) {
+			Intent intent = new Intent(this, UdrunkActivity_.class);
+			startActivity(intent);
+			finish();
+		}
 	}
 }

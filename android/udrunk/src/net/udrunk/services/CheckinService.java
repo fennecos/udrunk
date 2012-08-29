@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import net.udrunk.domain.Checkin;
+import net.udrunk.domain.Login;
 import net.udrunk.domain.dto.AllCheckinsDto;
 import net.udrunk.infra.DataBaseHelper;
 
@@ -12,6 +13,7 @@ import org.springframework.web.client.RestClientException;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -19,6 +21,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -27,7 +30,7 @@ public class CheckinService extends Service {
 	UdrunkClient restClient;
 
 	private DataBaseHelper databaseHelper;
-
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -44,7 +47,7 @@ public class CheckinService extends Service {
 	public void getCheckins() {
 
 		try {
-			AllCheckinsDto checkins = restClient.getFeed();
+			AllCheckinsDto checkins = restClient.getFeed(getCurrentLogin().getUsername(), getCurrentLogin().getApi_key());
 
 			for (Checkin checkin : checkins.objects) {
 				try {
@@ -150,5 +153,13 @@ public class CheckinService extends Service {
         }
         );
     }
+    
+    public Login getCurrentLogin() {
+		SharedPreferences settings = getApplication().getSharedPreferences("udrunk", 0);
+		String loginStr = settings.getString("login", null);
+		Gson gson = new Gson();
+		Login result = gson.fromJson(loginStr, Login.class);
+		return result;
+	}
 
 }
