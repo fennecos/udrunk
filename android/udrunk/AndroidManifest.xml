@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Udrunk" >
         <activity
-            android:name="UdrunkActivity_"
+            android:name="LoginActivity_"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="UdrunkActivity_" />
         <activity android:name="ShareActivity_" />
         <activity android:name="PlaceDetailsActivity_" />
         <activity android:name="LocationActivity_" />
