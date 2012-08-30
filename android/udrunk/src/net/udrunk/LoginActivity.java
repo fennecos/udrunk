@@ -2,6 +2,7 @@ package net.udrunk;
 
 import java.util.Observable;
 
+import net.udrunk.domain.Login;
 import net.udrunk.model.Model;
 
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.googlecode.androidannotations.annotations.AfterInject;
+import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.ViewById;
@@ -30,6 +32,16 @@ public class LoginActivity extends CommonActivity {
 	protected void onLoginClicked()
 	{
 		model.login(loginEdit.getText().toString(), passEdit.getText().toString());
+	}
+	
+	@AfterViews
+	protected void afterViews()
+	{
+		Login login = model.getCurrentLogin();
+		if(login != null)
+		{
+			loginEdit.setText(login.getUsername());
+		}
 	}
 	
 	@AfterInject

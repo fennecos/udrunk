@@ -3,6 +3,9 @@
 
     <string name="hello">Hello World, UdrunkActivity!</string>
     <string name="app_name">Udrunk</string>
+    <string name="login">Login</string>
+    <string name="username">User name</string>
+    <string name="password">Password</string>
     <string name="share_title">Share</string>
     <string name="share">Share</string>
     <string name="iamhere">I\'m here!</string>
