@@ -221,6 +221,15 @@ public class Model extends Observable {
 			onLoginFailed();
 		}
 	}
+	
+	public void logout()
+	{
+		Login previousLogin = getCurrentLogin();
+		previousLogin.setApi_key(null);
+		SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
+		Gson gson = new Gson();
+		settings.edit().putString("login", gson.toJson(previousLogin)).commit();
+	}
 
 	@UiThread
 	protected void onLoginSucess() {

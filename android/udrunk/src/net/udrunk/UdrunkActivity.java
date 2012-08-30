@@ -76,6 +76,13 @@ public class UdrunkActivity extends CommonActivity {
 	}
 	
 	@Override
+	protected void onStart() {
+		model.setPlaces(null);
+		
+		super.onStart();
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
 		updateProgress();
@@ -85,8 +92,22 @@ public class UdrunkActivity extends CommonActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.main, menu);
 		updateProgress();
 		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.logout_menu_item:
+			model.logout();
+			Intent intent = new Intent(this, LoginActivity_.class);
+			startActivity(intent);
+			finish();
+			return true;
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 
 	@Touch(R.id.btn_share)
