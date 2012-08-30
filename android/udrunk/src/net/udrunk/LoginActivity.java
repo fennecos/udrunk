@@ -6,6 +6,7 @@ import net.udrunk.domain.Login;
 import net.udrunk.model.Model;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,6 +33,19 @@ public class LoginActivity extends CommonActivity {
 	protected void onLoginClicked()
 	{
 		model.login(loginEdit.getText().toString(), passEdit.getText().toString());
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Login login = model.getCurrentLogin();
+		if(login != null && login.getApi_key() != null)
+		{
+			Intent intent = new Intent(this, UdrunkActivity_.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
+			finish();
+		}
 	}
 	
 	@AfterViews
