@@ -67,10 +67,10 @@ public class Model extends Observable {
 
 	public static final int LOGIN_SUCCESS = 0;
 	public static final int LOGIN_FAILED = 1;
-	
+
 	public static final int CHECKINS_UPDATING = 10;
 	public static final int CHECKINS_UPDATED = 11;
-	
+
 	public static final int PLACES_UPDATING = 20;
 	public static final int PLACES_UPDATED = 21;
 
@@ -85,22 +85,21 @@ public class Model extends Observable {
 	protected List<Place> places;
 
 	protected boolean connected;
-	
-	protected MyLocation myLocation = new MyLocation();
-	
-	public Location currentLocation;
 
+	protected MyLocation myLocation = new MyLocation();
+
+	public Location currentLocation;
 
 	@AfterInject
 	protected void afterInjection() {
 		imageLoader = createImageLoader(context);
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-		
+
 		GsonBuilder gsonb = new GsonBuilder();
 		gsonb.registerTypeHierarchyAdapter(Point.class, new PointSerializer());
 		Gson gson = gsonb.create();
 		messageConverters.add(new UdrunkJsonHttpMessageConverter(gson));
-		restClient.getRestTemplate().setMessageConverters(messageConverters );
+		restClient.getRestTemplate().setMessageConverters(messageConverters);
 	}
 
 	public Login getCurrentLogin() {
@@ -110,7 +109,7 @@ public class Model extends Observable {
 		Login result = gson.fromJson(loginStr, Login.class);
 		return result;
 	}
-	
+
 	public User getCurrentUser() {
 		User result = new User();
 		result.setId(getCurrentLogin().getId());
@@ -127,7 +126,8 @@ public class Model extends Observable {
 
 	public List<Checkin> getCheckins() {
 		try {
-			return getDBHelper().getCheckinDao().queryBuilder().orderBy("added", false).query();
+			return getDBHelper().getCheckinDao().queryBuilder()
+					.orderBy("added", false).query();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -188,21 +188,31 @@ public class Model extends Observable {
 	 * LOGIN SERVICE
 	 * 
 	 */
-	
+
 	@Background
 	public void login(String login, String pass) {
 		try {
 			Log.d("Login", login + " " + pass);
 			Login currentLogin = restClient.login(login, pass).getLogin();
-			if(currentLogin != null)
-			{
+			if (currentLogin != null) {
+				Login previousLogin = getCurrentLogin();
 				SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
 				Gson gson = new Gson();
-			    settings.edit().putString("login", gson.toJson(currentLogin)).commit();
-			    onLoginSucess();
-			}
-			else
-			{
+				settings.edit().putString("login", gson.toJson(currentLogin)).commit();
+
+				onLoginSucess();
+
+				// If previous login different, clear all checkins in bdd
+				if (previousLogin != null
+						&& !currentLogin.getUsername().equals(
+								previousLogin.getUsername())) {
+					try {
+						databaseHelper.getCheckinDao().deleteBuilder().delete();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
 				onLoginFailed();
 			}
 		} catch (RestClientException e) {
@@ -211,21 +221,18 @@ public class Model extends Observable {
 			onLoginFailed();
 		}
 	}
-	
+
 	@UiThread
-	protected void onLoginSucess()
-	{
+	protected void onLoginSucess() {
 		initAuth();
 		notifyObservers(LOGIN_SUCCESS);
 	}
-	
+
 	@UiThread
-	protected void onLoginFailed()
-	{
+	protected void onLoginFailed() {
 		notifyObservers(LOGIN_FAILED);
 	}
-	
-	
+
 	/**
 	 * 
 	 * PLACE SERVICE
@@ -236,24 +243,27 @@ public class Model extends Observable {
 		if (!placesLoading) {
 			placesLoading = true;
 			notifyObservers(PLACES_UPDATING);
-			
+
 			myLocation.getLocation(context, locationResult);
 		}
 	}
-	
+
 	LocationResult locationResult = new LocationResult() {
-		
+
 		@Override
 		public void gotLocation(Location location) {
 			currentLocation = location;
-			retrievePlacesBackground(location.getLatitude(), location.getLongitude());
+			retrievePlacesBackground(location.getLatitude(),
+					location.getLongitude());
 		}
 	};
 
 	@Background
 	protected void retrievePlacesBackground(double lat, double lg) {
 		try {
-			AllPlacesDto placesDto = restClient.getPlaces(lat, lg, getCurrentLogin().getUsername(), getCurrentLogin().getApi_key());
+			AllPlacesDto placesDto = restClient.getPlaces(lat, lg,
+					getCurrentLogin().getUsername(), getCurrentLogin()
+							.getApi_key());
 			setPlaces(placesDto.objects);
 		} catch (RestClientException e) {
 			showErrorToast("Places : " + e.getMessage());
@@ -363,7 +373,7 @@ public class Model extends Observable {
 			if (!checkinsLoading) {
 				checkinsLoading = true;
 				notifyObservers(CHECKINS_UPDATING);
-				
+
 				Toast.makeText(context, "Retieving Checkins",
 						Toast.LENGTH_SHORT).show();
 				Message msg = Message.obtain(null,
@@ -393,7 +403,8 @@ public class Model extends Observable {
 	@Background
 	public void insertCheckin(Checkin checkin) {
 		try {
-			restClient.insertCheckin(checkin, getCurrentLogin().getUsername(), getCurrentLogin().getApi_key());
+			restClient.insertCheckin(checkin, getCurrentLogin().getUsername(),
+					getCurrentLogin().getApi_key());
 		} catch (HttpServerErrorException e) {
 			e.printStackTrace();
 			Log.w("Model", e.getResponseBodyAsString());
@@ -451,7 +462,7 @@ public class Model extends Observable {
 	public void showErrorToast(String message) {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
-	
+
 	@Override
 	public void notifyObservers(Object data) {
 		setChanged();
