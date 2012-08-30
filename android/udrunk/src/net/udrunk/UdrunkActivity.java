@@ -49,8 +49,8 @@ public class UdrunkActivity extends CommonActivity {
 	private PlacesFragment placesFragment;
 
 	public void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
+		model.setPlaces(null);
 	}
 
 	@AfterViews
@@ -73,13 +73,6 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setOnPageChangeListener(onPageChangeListener);
 
 		model.retrieveCheckins();
-	}
-	
-	@Override
-	protected void onStart() {
-		model.setPlaces(null);
-		
-		super.onStart();
 	}
 	
 	@Override
