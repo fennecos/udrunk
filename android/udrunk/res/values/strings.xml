@@ -4,8 +4,11 @@
     <string name="hello">Hello World, UdrunkActivity!</string>
     <string name="app_name">Udrunk</string>
     <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
     <string name="username">User name</string>
+    <string name="email">E-Mail</string>
     <string name="password">Password</string>
+    <string name="validate">Validate</string>
     <string name="share_title">Share</string>
     <string name="share">Share</string>
     <string name="iamhere">I\'m here!</string>

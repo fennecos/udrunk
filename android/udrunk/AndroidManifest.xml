@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="SignUpActivity_" />
         <activity android:name="UdrunkActivity_" />
         <activity android:name="ShareActivity_" />
         <activity android:name="PlaceDetailsActivity_" />

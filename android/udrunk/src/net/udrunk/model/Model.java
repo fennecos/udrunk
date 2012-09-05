@@ -68,11 +68,14 @@ public class Model extends Observable {
 	public static final int LOGIN_SUCCESS = 0;
 	public static final int LOGIN_FAILED = 1;
 
-	public static final int CHECKINS_UPDATING = 10;
-	public static final int CHECKINS_UPDATED = 11;
+	public static final int USER_CREATION_SUCCESS = 10;
+	public static final int USER_CREATION_FAILED = 11;
 
-	public static final int PLACES_UPDATING = 20;
-	public static final int PLACES_UPDATED = 21;
+	public static final int CHECKINS_UPDATING = 20;
+	public static final int CHECKINS_UPDATED = 21;
+
+	public static final int PLACES_UPDATING = 30;
+	public static final int PLACES_UPDATED = 31;
 
 	@RootContext
 	protected Context context;
@@ -196,9 +199,11 @@ public class Model extends Observable {
 			Login currentLogin = restClient.login(login, pass).getLogin();
 			if (currentLogin != null) {
 				Login previousLogin = getCurrentLogin();
-				SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
+				SharedPreferences settings = context.getSharedPreferences(
+						"udrunk", 0);
 				Gson gson = new Gson();
-				settings.edit().putString("login", gson.toJson(currentLogin)).commit();
+				settings.edit().putString("login", gson.toJson(currentLogin))
+						.commit();
 
 				onLoginSucess();
 
@@ -221,9 +226,8 @@ public class Model extends Observable {
 			onLoginFailed();
 		}
 	}
-	
-	public void logout()
-	{
+
+	public void logout() {
 		Login previousLogin = getCurrentLogin();
 		previousLogin.setApi_key(null);
 		SharedPreferences settings = context.getSharedPreferences("udrunk", 0);
@@ -240,6 +244,29 @@ public class Model extends Observable {
 	@UiThread
 	protected void onLoginFailed() {
 		notifyObservers(LOGIN_FAILED);
+	}
+
+	@Background
+	public void createUser(String username, String password, String email) {
+		User user = new User();
+		user.setUsername(username);
+		user.setEmail(email);
+		try {
+			restClient.insertUser(user);
+			onUserCreationSuccess();
+		} catch (RestClientException e) {
+			onUserCreationFailed();
+		}
+	}
+
+	@UiThread
+	protected void onUserCreationSuccess() {
+		notifyObservers(USER_CREATION_SUCCESS);
+	}
+
+	@UiThread
+	protected void onUserCreationFailed() {
+		notifyObservers(USER_CREATION_FAILED);
 	}
 
 	/**

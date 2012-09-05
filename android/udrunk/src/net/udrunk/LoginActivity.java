@@ -34,6 +34,13 @@ public class LoginActivity extends CommonActivity {
 	{
 		model.login(loginEdit.getText().toString(), passEdit.getText().toString());
 	}
+
+	@Click(R.id.btn_signup)
+	protected void onSignUpClicked()
+	{
+		Intent intent = new Intent(this, SignUpActivity_.class);
+		startActivity(intent);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -26,8 +26,8 @@ public interface UdrunkClient {
 	@Get("/api/v1/login/?format=json&login={login}&pass={pass}")
 	AllLoginDto login(String login, String pass) throws RestClientException;
 	
-	@Post("/api/v1/user/?username={username}&api_key={apiKey}")
-	User insertUser(User user, String username, String apiKey) throws RestClientException;
+	@Post("/api/v1/user/")
+	User insertUser(User user) throws RestClientException;
 
 	@Post("/api/v1/checkin/?username={username}&api_key={apiKey}")
 	Object insertCheckin(Object checkin, String username, String apiKey) throws RestClientException;
