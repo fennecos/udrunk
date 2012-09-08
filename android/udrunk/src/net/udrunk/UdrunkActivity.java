@@ -45,6 +45,7 @@ public class UdrunkActivity extends CommonActivity {
 
 	private static ArrayList<Fragment> fragmentList;
 
+	private UserFragment userFragment;
 	private TimelineFragment timelineFragment;
 	private PlacesFragment placesFragment;
 
@@ -57,6 +58,9 @@ public class UdrunkActivity extends CommonActivity {
 	public void afterViews() {
 
 		fragmentList = new ArrayList<Fragment>();
+		userFragment = new UserFragment_();
+		userFragment.setUser(model.getCurrentUser());
+		fragmentList.add(userFragment);
 		timelineFragment = new TimelineFragment_();
 		fragmentList.add(timelineFragment);
 		placesFragment = new PlacesFragment_();
@@ -65,6 +69,8 @@ public class UdrunkActivity extends CommonActivity {
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());
 		viewPager.setAdapter(mMyFragmentPagerAdapter);
+		
+		viewPager.setCurrentItem(1);
 
 		// Bind the title indicator to the adapter
 		titleIndicator.setViewPager(viewPager);
@@ -163,7 +169,7 @@ public class UdrunkActivity extends CommonActivity {
 
 		@Override
 		public void onPageSelected(int pageSelected) {
-			if(pageSelected == 1)
+			if(pageSelected == 2)
 			{
 				if(model.getPlaces() == null)
 				{

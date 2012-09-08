@@ -114,8 +114,14 @@ public class Model extends Observable {
 	}
 
 	public User getCurrentUser() {
-		User result = new User();
-		result.setId(getCurrentLogin().getId());
+		User result;
+		try {
+			result = getDBHelper().getUserDao().queryForId(getCurrentLogin().getId());
+		} catch (SQLException e) {
+			result = new User();
+			result.setId(getCurrentLogin().getId());
+		}
+		
 		return result;
 	}
 

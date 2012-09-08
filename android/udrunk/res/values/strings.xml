@@ -18,6 +18,7 @@
 
     <string-array
         name="viewpager_titles">
+        <item>Me</item>
         <item>Feeds</item>
         <item>Places</item>
     </string-array>
