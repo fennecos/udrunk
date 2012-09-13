@@ -73,8 +73,13 @@ public class CheckinAdapter extends BaseAdapter {
 					.getAvatar(), null);
 			dateText.setText(DateFormat.getDateInstance().format(feed.getAddedDate()));
 
-			if (feed.getStatus() != null && feed.getStatus() != "") {
+			if (feed.getStatus() != null && !feed.getStatus().equals("")) {
 				statusText.setText(feed.getStatus());
+				statusText.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				statusText.setVisibility(View.GONE);
 			}
 			if (feed.getPlace() != null && feed.getPlace().getName() != null) {
 				placeText.setText("@ " + feed.getPlace().getName());
