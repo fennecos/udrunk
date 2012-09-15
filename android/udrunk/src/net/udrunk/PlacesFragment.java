@@ -4,6 +4,7 @@ import net.udrunk.adapters.PlaceAdapater;
 import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -13,7 +14,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.Click;
@@ -39,16 +39,11 @@ public class PlacesFragment extends SherlockFragment {
 
 	@ViewById(R.id.bnt_getplaces)
 	public Button getPlacesButton;
-
+	
 	@AfterViews
 	public void afterViews() {
+		setRetainInstance(true);
 		setHasOptionsMenu(true);
-		updatePlaces();
-	}
-	
-	@AfterInject
-	protected void afterInjection()
-	{
 		updatePlaces();
 	}
 
@@ -71,6 +66,7 @@ public class PlacesFragment extends SherlockFragment {
 
 	@UiThread
 	void updatePlaces() {
+		Log.d("updateplaces", model == null ? "null":"pas null");
 		if (model != null) {
 			adapter.updateItems(model.getPlaces());
 			listView.setAdapter(adapter);
@@ -98,7 +94,7 @@ public class PlacesFragment extends SherlockFragment {
 
 	public void updateProgress() {
 		if (model != null) {
-			if (model.placesLoading) {
+			if (model.isPlacesLoading()) {
 				getPlacesButton.setVisibility(View.GONE);
 				empty.setVisibility(View.VISIBLE);
 			} else if (model.getPlaces() == null

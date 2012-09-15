@@ -21,6 +21,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.Touch;
+import com.googlecode.androidannotations.annotations.Trace;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.googlecode.androidannotations.annotations.res.AnimationRes;
@@ -45,31 +46,34 @@ public class UdrunkActivity extends CommonActivity {
 
 	private static ArrayList<Fragment> fragmentList;
 
-	private UserFragment userFragment;
-	private TimelineFragment timelineFragment;
-	private PlacesFragment placesFragment;
+	private static UserFragment userFragment;
+	private static TimelineFragment timelineFragment;
+	private static PlacesFragment placesFragment;
 
+	@Trace
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		model.setPlaces(null);
 	}
 
+	@Trace
 	@AfterViews
 	public void afterViews() {
 
-		fragmentList = new ArrayList<Fragment>();
-		userFragment = new UserFragment_();
-		userFragment.setUser(model.getCurrentUser());
-		fragmentList.add(userFragment);
-		timelineFragment = new TimelineFragment_();
-		fragmentList.add(timelineFragment);
-		placesFragment = new PlacesFragment_();
-		fragmentList.add(placesFragment);
+		if (fragmentList == null) {
+			fragmentList = new ArrayList<Fragment>();
+			userFragment = new UserFragment_();
+			fragmentList.add(userFragment);
+			timelineFragment = new TimelineFragment_();
+			fragmentList.add(timelineFragment);
+			placesFragment = new PlacesFragment_();
+			fragmentList.add(placesFragment);
+		}
 
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
 				getSupportFragmentManager());
 		viewPager.setAdapter(mMyFragmentPagerAdapter);
-		
+
 		viewPager.setCurrentItem(1);
 
 		// Bind the title indicator to the adapter
@@ -80,7 +84,7 @@ public class UdrunkActivity extends CommonActivity {
 
 		model.retrieveCheckins();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -95,7 +99,7 @@ public class UdrunkActivity extends CommonActivity {
 		updateProgress();
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -138,7 +142,7 @@ public class UdrunkActivity extends CommonActivity {
 			}
 		}
 	}
-	
+
 	protected class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
 		public MyFragmentPagerAdapter(FragmentManager fm) {
@@ -156,7 +160,7 @@ public class UdrunkActivity extends CommonActivity {
 
 			return fragmentList.size();
 		}
-		
+
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Resources res = UdrunkActivity.this.getResources();
@@ -164,15 +168,14 @@ public class UdrunkActivity extends CommonActivity {
 			return titles[position];
 		}
 	}
-	
+
 	protected ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
 
+		@Trace
 		@Override
 		public void onPageSelected(int pageSelected) {
-			if(pageSelected == 2)
-			{
-				if(model.getPlaces() == null)
-				{
+			if (pageSelected == 2) {
+				if (model.getPlaces() == null) {
 					model.retrievePlaces();
 				}
 			}

@@ -38,17 +38,11 @@ public class UserFragment extends SherlockFragment {
 	@AfterViews
 	protected void afterViews()
 	{
+		setRetainInstance(true);
+		user = ((CommonActivity)getActivity()).model.getCurrentUser();
 		nameText.setText(user.getUsername());
 		emailText.setText(user.getEmail());
 		model.imageLoader.bind(avatarImg, user.getAvatar(), null);
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 }

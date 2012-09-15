@@ -20,6 +20,7 @@ public abstract class CommonActivity extends SherlockFragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 
 		model = Model_.getInstance_(this);
+		model.addObserver(this);
 		super.onCreate(savedInstanceState);
 	}
 
@@ -32,13 +33,17 @@ public abstract class CommonActivity extends SherlockFragmentActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		model.addObserver(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+	
+	@Override
+	protected void onDestroy() {
 		model.deleteObserver(this);
+		super.onDestroy();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 import net.udrunk.domain.Checkin;
 import net.udrunk.domain.Login;
@@ -57,6 +58,7 @@ import com.googlecode.androidannotations.annotations.AfterInject;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
+import com.googlecode.androidannotations.annotations.Trace;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.rest.RestService;
 import com.googlecode.androidannotations.api.Scope;
@@ -152,12 +154,21 @@ public class Model extends Observable {
 	}
 
 	public boolean checkinsLoading;
-	public boolean placesLoading;
+	private boolean placesLoading;
 
+	public synchronized boolean isPlacesLoading() {
+		return placesLoading;
+	}
+	
+	public synchronized void setPlacesLoading(boolean placesLoading) {
+		this.placesLoading = placesLoading;
+	}
+	
 	@AfterInject
 	public void doSomethingAfterInjection() {
 		doBindService();
 	}
+
 
 	/**
 	 * 
@@ -280,10 +291,10 @@ public class Model extends Observable {
 	 * PLACE SERVICE
 	 * 
 	 */
-
+	@Trace
 	public void retrievePlaces() {
-		if (!placesLoading) {
-			placesLoading = true;
+		if (!isPlacesLoading()) {
+			setPlacesLoading(true);
 			notifyObservers(PLACES_UPDATING);
 
 			myLocation.getLocation(context, locationResult);
@@ -300,6 +311,7 @@ public class Model extends Observable {
 		}
 	};
 
+	@Trace
 	@Background
 	protected void retrievePlacesBackground(double lat, double lg) {
 		try {
@@ -314,9 +326,10 @@ public class Model extends Observable {
 		}
 	}
 
+	@Trace
 	@UiThread
 	protected void onPlacesRetieved() {
-		placesLoading = false;
+		setPlacesLoading(false);
 		notifyObservers(PLACES_UPDATED);
 	}
 
@@ -505,6 +518,16 @@ public class Model extends Observable {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 
+	@Override
+	public void addObserver(Observer observer) {
+		super.addObserver(observer);
+	}
+
+	@Override
+	public synchronized void deleteObserver(Observer observer) {
+		super.deleteObserver(observer);
+	}
+	
 	@Override
 	public void notifyObservers(Object data) {
 		setChanged();

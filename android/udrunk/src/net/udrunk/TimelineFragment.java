@@ -31,6 +31,7 @@ public class TimelineFragment extends SherlockFragment {
 
 	@AfterViews
 	public void afterViews() {
+		setRetainInstance(true);
 		setHasOptionsMenu(true);
 		updateCheckins();
 	}
