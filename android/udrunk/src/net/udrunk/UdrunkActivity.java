@@ -46,10 +46,6 @@ public class UdrunkActivity extends CommonActivity {
 
 	private static ArrayList<Fragment> fragmentList;
 
-	private static UserFragment userFragment;
-	private static TimelineFragment timelineFragment;
-	private static PlacesFragment placesFragment;
-
 	@Trace
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,13 +57,14 @@ public class UdrunkActivity extends CommonActivity {
 	public void afterViews() {
 
 		if (fragmentList == null) {
+			Fragment fragment;
 			fragmentList = new ArrayList<Fragment>();
-			userFragment = new UserFragment_();
-			fragmentList.add(userFragment);
-			timelineFragment = new TimelineFragment_();
-			fragmentList.add(timelineFragment);
-			placesFragment = new PlacesFragment_();
-			fragmentList.add(placesFragment);
+			fragment = new UserFragment_();
+			fragmentList.add(fragment);
+			fragment = new TimelineFragment_();
+			fragmentList.add(fragment);
+			fragment = new PlacesFragment_();
+			fragmentList.add(fragment);
 		}
 
 		mMyFragmentPagerAdapter = new MyFragmentPagerAdapter(
@@ -89,8 +86,6 @@ public class UdrunkActivity extends CommonActivity {
 	protected void onResume() {
 		super.onResume();
 		updateProgress();
-		timelineFragment.updateCheckins();
-		placesFragment.updatePlaces();
 	}
 
 	@Override
@@ -197,13 +192,6 @@ public class UdrunkActivity extends CommonActivity {
 		}
 		if (data.equals(Model.CHECKINS_UPDATED)) {
 			updateProgress();
-			timelineFragment.updateCheckins();
-		}
-		if (data.equals(Model.PLACES_UPDATING)) {
-			placesFragment.updateProgress();
-		}
-		if (data.equals(Model.PLACES_UPDATED)) {
-			placesFragment.updatePlaces();
 		}
 	}
 

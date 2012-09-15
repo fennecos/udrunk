@@ -1,13 +1,13 @@
 package net.udrunk;
 
 import java.util.List;
+import java.util.Observable;
 
 import net.udrunk.adapters.CheckinAdapter;
 import net.udrunk.domain.Checkin;
 import net.udrunk.model.Model;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -18,14 +18,11 @@ import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.timeline)
-public class TimelineFragment extends SherlockFragment {
+public class TimelineFragment extends CommonFragment {
 
 	@ViewById
 	ListView listView;
 	
-	@Bean
-	public Model model;
-
 	@Bean
 	public CheckinAdapter adapter;
 
@@ -65,5 +62,12 @@ public class TimelineFragment extends SherlockFragment {
 
 	protected UdrunkActivity getUdrunkActivity() {
 		return (UdrunkActivity) getActivity();
+	}
+	
+	@Override
+	public void update(Observable observable, Object data) {
+		if (data.equals(Model.CHECKINS_UPDATED)) {
+			updateCheckins();
+		}
 	}
 }

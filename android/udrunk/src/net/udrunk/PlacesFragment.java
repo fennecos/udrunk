@@ -1,16 +1,18 @@
 package net.udrunk;
 
+import java.util.Observable;
+
 import net.udrunk.adapters.PlaceAdapater;
 import net.udrunk.domain.Place;
 import net.udrunk.model.Model;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -19,18 +21,16 @@ import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.ItemClick;
+import com.googlecode.androidannotations.annotations.Trace;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.places)
-public class PlacesFragment extends SherlockFragment {
+public class PlacesFragment extends CommonFragment {
 
 	@ViewById
 	ListView listView;
 
-	@Bean
-	public Model model;
-	
 	@Bean
 	public PlaceAdapater adapter;
 
@@ -39,7 +39,14 @@ public class PlacesFragment extends SherlockFragment {
 
 	@ViewById(R.id.bnt_getplaces)
 	public Button getPlacesButton;
+
+	@Trace
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
 	
+	@Trace
 	@AfterViews
 	public void afterViews() {
 		setRetainInstance(true);
@@ -92,19 +99,33 @@ public class PlacesFragment extends SherlockFragment {
 		model.retrievePlaces();
 	}
 
+	@Trace
 	public void updateProgress() {
 		if (model != null) {
 			if (model.isPlacesLoading()) {
+				Log.d("updateprogress", "1");
 				getPlacesButton.setVisibility(View.GONE);
 				empty.setVisibility(View.VISIBLE);
 			} else if (model.getPlaces() == null
 					|| model.getPlaces().size() == 0) {
+				Log.d("updateprogress", "2");
 				getPlacesButton.setVisibility(View.VISIBLE);
 				empty.setVisibility(View.GONE);
 			} else {
+				Log.d("updateprogress", "3");
 				getPlacesButton.setVisibility(View.GONE);
 				empty.setVisibility(View.GONE);
 			}
+		}
+	}
+	
+	@Override
+	public void update(Observable observable, Object data) {
+		if (data.equals(Model.PLACES_UPDATING)) {
+			updateProgress();
+		}
+		if (data.equals(Model.PLACES_UPDATED)) {
+			updatePlaces();
 		}
 	}
 }

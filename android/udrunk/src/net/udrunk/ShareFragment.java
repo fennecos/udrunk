@@ -21,7 +21,6 @@ public class ShareFragment extends SherlockFragment {
 	@AfterViews
 	public void afterViews() {
 		setHasOptionsMenu(true);
-		
 	}
 	
 	@Click(R.id.btn_share)

@@ -1,18 +1,15 @@
 package net.udrunk;
 
 import net.udrunk.domain.User;
-import net.udrunk.model.Model;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.googlecode.androidannotations.annotations.AfterViews;
-import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 @EFragment(R.layout.user)
-public class UserFragment extends SherlockFragment {
+public class UserFragment extends CommonFragment {
 
 	private User user;
 	
@@ -28,9 +25,6 @@ public class UserFragment extends SherlockFragment {
 	@ViewById(R.id.img_avatar)
 	protected ImageView avatarImg;
 	
-	@Bean
-	protected Model model;
-	
 	public UserFragment() {
 		super();
 	}
@@ -39,7 +33,7 @@ public class UserFragment extends SherlockFragment {
 	protected void afterViews()
 	{
 		setRetainInstance(true);
-		user = ((CommonActivity)getActivity()).model.getCurrentUser();
+		user = model.getCurrentUser();
 		nameText.setText(user.getUsername());
 		emailText.setText(user.getEmail());
 		model.imageLoader.bind(avatarImg, user.getAvatar(), null);
