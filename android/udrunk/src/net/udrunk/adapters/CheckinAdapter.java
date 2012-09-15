@@ -1,11 +1,11 @@
 package net.udrunk.adapters;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.udrunk.R;
 import net.udrunk.domain.Checkin;
+import net.udrunk.infra.TimeUtil;
 import net.udrunk.model.Model;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -73,7 +73,7 @@ public class CheckinAdapter extends BaseAdapter {
 			avatarImg.setImageResource(R.drawable.drink_babybottle);
 			model.imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
-			dateText.setText(DateFormat.getDateInstance().format(feed.getAddedDate()));
+			dateText.setText(TimeUtil.formatAgoDate(feed.getAddedDate(), context));
 
 			if (feed.getStatus() != null && !feed.getStatus().equals("")) {
 				statusText.setText(feed.getStatus());

@@ -22,5 +22,26 @@
         <item>Feeds</item>
         <item>Places</item>
     </string-array>
+    
+    <plurals name="seconds_ago">
+        <item quantity="one">One second ago</item>
+        <item quantity="other">%d s ago</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">One minutes ago</item>
+        <item quantity="other">%d m ago</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">One hour ago</item>
+        <item quantity="other">%d h ago</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">One day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">One month ago</item>
+        <item quantity="other">%d months ago</item>
+    </plurals>
 
 </resources>
