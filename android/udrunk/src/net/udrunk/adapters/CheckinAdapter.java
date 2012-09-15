@@ -69,6 +69,8 @@ public class CheckinAdapter extends BaseAdapter {
 			TextView dateText = (TextView) v.findViewById(R.id.txt_date);
 
 			nameText.setText(feed.getUser().getUsername());
+			
+			avatarImg.setImageResource(R.drawable.drink_babybottle);
 			model.imageLoader.bind(avatarImg, feed.getUser()
 					.getAvatar(), null);
 			dateText.setText(DateFormat.getDateInstance().format(feed.getAddedDate()));
