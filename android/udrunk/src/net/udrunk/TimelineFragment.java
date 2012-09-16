@@ -6,6 +6,7 @@ import java.util.Observable;
 import net.udrunk.adapters.CheckinAdapter;
 import net.udrunk.domain.Checkin;
 import net.udrunk.model.Model;
+import android.os.Handler;
 import android.widget.ListView;
 
 import com.actionbarsherlock.view.Menu;
@@ -22,15 +23,41 @@ public class TimelineFragment extends CommonFragment {
 
 	@ViewById
 	ListView listView;
-	
+
 	@Bean
 	public CheckinAdapter adapter;
+	
+	public static final int REFRESH_INTERVAL = 10000; 
+
+	private Handler currenRefreshtHandler;
+	private Runnable currentRefreshRunnable;
 
 	@AfterViews
 	public void afterViews() {
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
 		updateCheckins();
+		
+		autoRefresh();
+	}
+
+	@Override
+	public void onDestroy() {
+		if (currenRefreshtHandler != null) {
+			currenRefreshtHandler.removeCallbacks(currentRefreshRunnable);
+		}
+		super.onDestroy();
+	}
+
+	public void autoRefresh() {
+		currenRefreshtHandler = new Handler();
+		currentRefreshRunnable = new Runnable() {
+			public void run() {
+				adapter.notifyDataSetChanged();
+				autoRefresh();
+			}
+		};
+		currenRefreshtHandler.postDelayed(currentRefreshRunnable, REFRESH_INTERVAL);
 	}
 
 	@Override
@@ -51,10 +78,9 @@ public class TimelineFragment extends CommonFragment {
 
 	@UiThread
 	public void updateCheckins() {
-		if(model != null)
-		{
+		if (model != null) {
 			List<Checkin> checkins = model.getCheckins();
-			
+
 			adapter.updateItems(checkins);
 			listView.setAdapter(adapter);
 		}
@@ -63,7 +89,7 @@ public class TimelineFragment extends CommonFragment {
 	protected UdrunkActivity getUdrunkActivity() {
 		return (UdrunkActivity) getActivity();
 	}
-	
+
 	@Override
 	public void update(Observable observable, Object data) {
 		if (data.equals(Model.CHECKINS_UPDATED)) {
