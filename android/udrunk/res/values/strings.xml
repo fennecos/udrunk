@@ -23,6 +23,9 @@
         <item>Places</item>
     </string-array>
     
+    
+    <string name="todayat">Today at %s</string>
+    <string name="yesterdayat">Yesterday at %s</string>
     <plurals name="seconds_ago">
         <item quantity="one">%d second ago</item>
         <item quantity="other">%d seconds ago</item>
