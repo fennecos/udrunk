@@ -19,7 +19,7 @@ public class ShareActivity extends CommonActivity {
 
 	@Extra("place_extra")
 	protected Place currentPlace;
-
+	
 	@AfterViews
 	public void afterViews() {
 		if (currentPlace == null) {
@@ -29,13 +29,6 @@ public class ShareActivity extends CommonActivity {
 					.beginTransaction();
 			ft.add(R.id.fragment_container, placesFragment);
 			ft.commit();
-
-			placesFragment.updatePlaces();
-			
-			if(model.getPlaces() == null)
-			{
-				model.retrievePlaces();
-			}
 		} else {
 			showShareFragment(currentPlace);
 		}
@@ -44,6 +37,14 @@ public class ShareActivity extends CommonActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setTitle(R.string.share_title);
 		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		model.deletePlacesIfNecessary();
+		model.retrievePlaces();
 	}
 
 	@Override

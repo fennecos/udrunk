@@ -20,6 +20,7 @@ import net.udrunk.infra.JamendoCache;
 import net.udrunk.infra.MyLocation;
 import net.udrunk.infra.MyLocation.LocationResult;
 import net.udrunk.infra.PointSerializer;
+import net.udrunk.infra.TimeUtil;
 import net.udrunk.infra.resttemplate.UdrunkJsonHttpMessageConverter;
 import net.udrunk.services.CheckinService;
 import net.udrunk.services.UdrunkClient;
@@ -118,12 +119,13 @@ public class Model extends Observable {
 	public User getCurrentUser() {
 		User result;
 		try {
-			result = getDBHelper().getUserDao().queryForId(getCurrentLogin().getId());
+			result = getDBHelper().getUserDao().queryForId(
+					getCurrentLogin().getId());
 		} catch (SQLException e) {
 			result = new User();
 			result.setId(getCurrentLogin().getId());
 		}
-		
+
 		return result;
 	}
 
@@ -159,16 +161,15 @@ public class Model extends Observable {
 	public synchronized boolean isPlacesLoading() {
 		return placesLoading;
 	}
-	
+
 	public synchronized void setPlacesLoading(boolean placesLoading) {
 		this.placesLoading = placesLoading;
 	}
-	
+
 	@AfterInject
 	public void doSomethingAfterInjection() {
 		doBindService();
 	}
-
 
 	/**
 	 * 
@@ -291,13 +292,33 @@ public class Model extends Observable {
 	 * PLACE SERVICE
 	 * 
 	 */
+
+	private long lastPlaceRetrievedTime = 0;
+	private static long PLACES_MAX_TIME_DIFF = TimeUtil.SECOND * 15;
+
+	public boolean arePlacesPassed() {
+		if ((TimeUtil.getCurrentTime() - lastPlaceRetrievedTime) > PLACES_MAX_TIME_DIFF) {
+			return true;
+		}
+		return false;
+	}
+
+	public void deletePlacesIfNecessary() {
+		if (arePlacesPassed()) {
+			setPlaces(null);
+			notifyObservers(PLACES_UPDATED);
+		}
+	}
+
 	@Trace
 	public void retrievePlaces() {
 		if (!isPlacesLoading()) {
-			setPlacesLoading(true);
-			notifyObservers(PLACES_UPDATING);
+			if (arePlacesPassed()) {
+				setPlacesLoading(true);
+				notifyObservers(PLACES_UPDATING);
 
-			myLocation.getLocation(context, locationResult);
+				myLocation.getLocation(context, locationResult);
+			}
 		}
 	}
 
@@ -329,6 +350,7 @@ public class Model extends Observable {
 	@Trace
 	@UiThread
 	protected void onPlacesRetieved() {
+		lastPlaceRetrievedTime = TimeUtil.getCurrentTime();
 		setPlacesLoading(false);
 		notifyObservers(PLACES_UPDATED);
 	}
@@ -527,7 +549,7 @@ public class Model extends Observable {
 	public synchronized void deleteObserver(Observer observer) {
 		super.deleteObserver(observer);
 	}
-	
+
 	@Override
 	public void notifyObservers(Object data) {
 		setChanged();

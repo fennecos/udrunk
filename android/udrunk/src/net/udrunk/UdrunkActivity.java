@@ -49,13 +49,11 @@ public class UdrunkActivity extends CommonActivity {
 	@Trace
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		model.setPlaces(null);
 	}
 
 	@Trace
 	@AfterViews
 	public void afterViews() {
-
 		if (fragmentList == null) {
 			Fragment fragment;
 			fragmentList = new ArrayList<Fragment>();
@@ -78,13 +76,19 @@ public class UdrunkActivity extends CommonActivity {
 		titleIndicator.setTextColor(Color.BLACK);
 		titleIndicator.setSelectedColor(Color.BLACK);
 		titleIndicator.setOnPageChangeListener(onPageChangeListener);
-
-		model.retrieveCheckins();
 	}
 
+	@Trace
 	@Override
 	protected void onResume() {
 		super.onResume();
+		model.retrieveCheckins();
+		
+		model.deletePlacesIfNecessary();
+		if(viewPager.getCurrentItem() == 2)
+		{
+			model.retrievePlaces();
+		}
 		updateProgress();
 	}
 
@@ -166,13 +170,10 @@ public class UdrunkActivity extends CommonActivity {
 
 	protected ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
 
-		@Trace
 		@Override
 		public void onPageSelected(int pageSelected) {
 			if (pageSelected == 2) {
-				if (model.getPlaces() == null) {
-					model.retrievePlaces();
-				}
+				model.retrievePlaces();
 			}
 		}
 

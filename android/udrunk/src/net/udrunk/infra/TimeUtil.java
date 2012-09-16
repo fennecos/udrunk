@@ -75,4 +75,10 @@ public class TimeUtil {
 
 		return result;
 	}
+	
+	public static long getCurrentTime()
+	{
+		Date now = new Date();
+		return now.getTime();
+	}
 }
