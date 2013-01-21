@@ -1,0 +1,23 @@
+{% extends "mobile/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="post">
+	<fieldset>
+		{% csrf_token %}
+		<p class="field">
+			<label for="id_username">{% trans "Username" %}</label>
+			<input type="text" id="id_username" name="username" value="{% if request.POST %}{{ request.POST.username }}{% endif %}" />
+		</p>
+		<p class="field">
+			<label for="id_password">{% trans "Password" %}</label>
+			<input type="password" id="id_password" name="password" value="" />
+		</p>
+		</fieldset>
+		<p class="field submit">
+			<input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}/m/{% endif %}" />
+			<input type="submit" value="{% trans "Login" %}" />
+		</p>
+	</fieldset>
+</form>
+{% endblock %}

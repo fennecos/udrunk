@@ -1,0 +1,35 @@
+{% load i18n %}
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{% block title %}udrunk!{% endblock %}</title>
+  <meta name="description" content="">
+  <meta name="author" content="Pülz">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  <script src="{{ STATIC_URL }}js/libs/jquery-1.6.2.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+<body>
+  <div id="container">
+    <header id="head" class="wrapper">
+    	<h1>udrunk!</h1>
+    </header>
+    <section id="main">
+	{% block content %}
+
+	{% endblock %}
+	</section>
+	<footer>
+		&copy; Pülz 2012
+	</footer>
+	{% block scripts %}
+	<script>
+		var API_ROOT = 'http://localhost:8000/api/v1/';
+	</script>
+	<script src="{{ STATIC_URL }}js/core.js"></script>
+	{% endblock %}
+</body>
+</html>
